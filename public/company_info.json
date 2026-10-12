@@ -1,0 +1,60 @@
+{
+    "company_name": "Acme Innovates",
+    "motto": "Innovating the Future, Today.",
+    "logo_url": "/logo.jpg",
+    "favicon_url": "/assets/images/favicon.ico",
+    "contact": {
+        "address": "123 Tech Lane, Innovation Park, San Francisco, CA 94105",
+        "phone": "+1 (555) 123-4567",
+        "email": "contact@acmeinnovates.com",
+        "support_email": "support@acmeinnovates.com"
+    },
+    "social_media": {
+        "facebook": "https://facebook.com/acmeinnovates",
+        "twitter": "https://twitter.com/acmeinnovates",
+        "linkedin": "https://linkedin.com/company/acmeinnovates",
+        "instagram": "https://instagram.com/acmeinnovates"
+    },
+    "about_us": "Acme Innovates is a leading technology company dedicated to building next-generation digital solutions for modern businesses. We specialize in creating seamless user experiences and robust architectures.",
+    "services": [
+        {
+            "id": "web_dev",
+            "name": "Web Development",
+            "description": "Custom, responsive websites tailored to your specific business needs."
+        },
+        {
+            "id": "cloud_hosting",
+            "name": "Cloud Hosting",
+            "description": "Reliable, secure, and scalable cloud infrastructure for your applications."
+        },
+        {
+            "id": "ai_solutions",
+            "name": "AI Solutions",
+            "description": "Integrating cutting-edge artificial intelligence into your daily workflow."
+        }
+    ],
+    "business_hours": {
+        "monday_to_friday": "9:00 AM - 6:00 PM",
+        "saturday": "10:00 AM - 4:00 PM",
+        "sunday": "Closed"
+    },
+    "branding_colors": {
+        "primary": "#0056b3",
+        "secondary": "#ffc107",
+        "accent": "#e83e8c",
+        "background": "#ffffff",
+        "text_dark": "#333333",
+        "text_light": "#f8f9fa"
+    },
+    "seo_meta": {
+        "title": "Acme Innovates | Next-Gen Digital Solutions",
+        "description": "Acme Innovates provides cutting-edge web development, cloud hosting, and AI solutions to scale your business.",
+        "keywords": [
+            "web development",
+            "tech company",
+            "AI solutions",
+            "cloud hosting",
+            "digital agency"
+        ]
+    }
+}
