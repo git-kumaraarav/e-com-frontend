@@ -8,7 +8,6 @@ import {
   CarouselItem,
   CarouselPrevious,
   CarouselNext,
-  useCarousel,
 } from "../ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import Link from "next/link";
@@ -35,28 +34,19 @@ const carouselItems = [
   },
 ];
 
-const Hero = ({
-  className,
-  children,
-}: {
-  className?: string;
-  children?: React.ReactNode;
-}) => {
+const Hero = ({ className }: { className?: string }) => {
   return (
     <div
-      className={cn(
-        "flex flex-col items-center justify-center w-full h-full gap-2",
-        className,
-      )}
+      className={cn("flex w-full flex-col gap-6", className)}
     >
       {/* carousel */}
-      <div className="w-full h-full items-center justify-center">
+      <div className="relative w-full overflow-hidden rounded-2xl border border-border bg-muted shadow-sm">
         <Carousel
           plugins={[Autoplay({ delay: 3000 })]}
           className="w-full h-full"
         >
           <CarouselContent className="w-full h-full">
-            <CarouselPrevious className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full">
+            <CarouselPrevious className="absolute left-4 top-1/2 z-10 -translate-y-1/2 border-border bg-background/90 text-foreground shadow-sm hover:bg-background">
               <span className="sr-only">Previous</span>
               <svg
                 className="w-6 h-6"
@@ -73,7 +63,7 @@ const Hero = ({
                 />
               </svg>
             </CarouselPrevious>
-            <CarouselNext className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full">
+            <CarouselNext className="absolute right-4 top-1/2 z-10 -translate-y-1/2 border-border bg-background/90 text-foreground shadow-sm hover:bg-background">
               <span className="sr-only">Next</span>
               <svg
                 className="w-6 h-6"
@@ -91,12 +81,12 @@ const Hero = ({
               </svg>
             </CarouselNext>
             {carouselItems.map((item) => (
-              <CarouselItem key={item.id} className="w-full h-full">
+              <CarouselItem key={item.id} className="w-full">
                 <Link href={item.url}>
                   <Image
                     src={item.imageUrl}
                     alt={item.altText}
-                    className="w-full h-full object-cover"
+                    className="aspect-[2/1] w-full object-cover"
                     height={400}
                     width={800}
                   />
@@ -108,11 +98,11 @@ const Hero = ({
       </div>
 
       {/* Exclusive Deals Images */}
-      <div className="w-full">
+      <div className="w-full overflow-hidden rounded-xl border border-border bg-muted">
         <Image
           src="/images/hero1.jpg"
           alt="Exclusive Deal 1"
-          className="w-full h-full object-cover rounded-md"
+          className="aspect-[3/1] w-full object-cover"
           height={200}
           width={600}
         />
