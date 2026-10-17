@@ -5,24 +5,17 @@ import i from "@/public/company_info.json";
 import Image from "next/image";
 import { SettingsIcon, ShoppingCart, UserIcon } from "lucide-react";
 import Link from "next/link";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
-import { Input } from "../ui/input";
+import SearchBox from "@/components/SearchBox";
+import { useStore } from "@/lib/store";
+import ThemeChanger from "@/components/ThemeChanger";
 
 const Navbar = ({ className }: { className?: string }) => {
-  const loggedIn = false;
+  const { user, cartCount } = useStore();
 
   return (
     <header
       className={cn(
-        "sticky top-3 z-20 mt-3 flex w-full items-center justify-between gap-4 rounded-xl border border-border bg-background/95 p-3 shadow-sm backdrop-blur",
+        "navbar sticky top-3 z-20 mt-3 w-full rounded-box border border-base-300 bg-base-100/95 shadow-sm backdrop-blur gap-3 justify-between",
         className,
       )}
     >
@@ -33,57 +26,40 @@ const Navbar = ({ className }: { className?: string }) => {
         </Link>
       </div>
 
-      <div className="hidden max-w-xl flex-1 items-center justify-center sm:flex">
-        <Input type="search" placeholder="Search products..." aria-label="Search products" />
+      <div className="hidden max-w-xl flex-1 items-center justify-center md:flex">
+        <SearchBox />
       </div>
 
-      <NavigationMenu>
-        <NavigationMenuList>
-          {loggedIn ? (
+      <nav className="flex gap-1">
+          <ThemeChanger />
+          {user ? (
             <>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger>
+              <details className="dropdown dropdown-end">
+                <summary className="btn btn-ghost">
                   <UserIcon className="mr-2 size-4" />
                   Account
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <NavigationMenuLink href="/account">Manage Account</NavigationMenuLink>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink href="/settings" className={navigationMenuTriggerStyle()}>
+                </summary>
+                <ul className="menu dropdown-content z-30 mt-2 w-48 rounded-box bg-base-100 p-2 shadow">
+                  <li><Link href="/u">Manage Account</Link></li>
+                </ul>
+              </details>
+              <Link href="/u/addresses" className="btn btn-ghost">
                   <SettingsIcon className="mr-2 size-4" />
                   Settings
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink href="/wishlist" className={navigationMenuTriggerStyle()}>
-                  Wishlist
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink href="/cart" className={navigationMenuTriggerStyle()}>
+              </Link>
+              <Link href="/u/wishlist" className="btn btn-ghost">Wishlist</Link>
+              <Link href="/u/cart" className="btn btn-ghost">
                   <ShoppingCart className="mr-2 size-4" />
-                  Cart
-                </NavigationMenuLink>
-              </NavigationMenuItem>
+                  Cart {cartCount > 0 && <span className="badge badge-primary">{cartCount}</span>}
+              </Link>
             </>
           ) : (
             <>
-              <NavigationMenuItem>
-                <NavigationMenuLink href="/login" className={navigationMenuTriggerStyle()}>
-                  Login
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink href="/register" className={navigationMenuTriggerStyle()}>
-                  Register
-                </NavigationMenuLink>
-              </NavigationMenuItem>
+              <Link href="/login" className="btn btn-ghost">Login</Link>
+              <Link href="/register" className="btn btn-primary">Register</Link>
             </>
           )}
-        </NavigationMenuList>
-      </NavigationMenu>
+      </nav>
     </header>
   );
 };

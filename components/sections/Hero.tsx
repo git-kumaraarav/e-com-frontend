@@ -8,7 +8,7 @@ import {
   CarouselItem,
   CarouselPrevious,
   CarouselNext,
-} from "../ui/carousel";
+} from "../carousel";
 import Autoplay from "embla-carousel-autoplay";
 import Link from "next/link";
 import Image from "next/image";
@@ -17,19 +17,19 @@ const carouselItems = [
   {
     id: 1,
     imageUrl: "/images/hero1.jpg",
-    url: "https://example.com/offer1",
+    url: "/electronics",
     altText: "Hero Image 1",
   },
   {
     id: 2,
     imageUrl: "/images/hero1.jpg",
-    url: "https://example.com/offer2",
+    url: "/jewelery",
     altText: "Hero Image 2",
   },
   {
     id: 3,
     imageUrl: "/images/hero1.jpg",
-    url: "https://example.com/offer3",
+    url: "/men's clothing",
     altText: "Hero Image 3",
   },
 ];
@@ -40,13 +40,10 @@ const Hero = ({ className }: { className?: string }) => {
       className={cn("flex w-full flex-col gap-6", className)}
     >
       {/* carousel */}
-      <div className="relative w-full overflow-hidden rounded-2xl border border-border bg-muted shadow-sm">
-        <Carousel
-          plugins={[Autoplay({ delay: 3000 })]}
-          className="w-full h-full"
-        >
-          <CarouselContent className="w-full h-full">
-            <CarouselPrevious className="absolute left-4 top-1/2 z-10 -translate-y-1/2 border-border bg-background/90 text-foreground shadow-sm hover:bg-background">
+      <div className="relative w-full overflow-hidden rounded-box border border-base-300 bg-base-200 shadow-sm">
+        <Carousel plugins={[Autoplay({ delay: 3000 })]} className="h-full w-full">
+          <CarouselContent className="h-full w-full">
+            <CarouselPrevious className="btn btn-circle btn-sm absolute left-4 top-1/2 z-10 -translate-y-1/2 border-base-300 bg-base-100/90 text-base-content shadow-sm hover:bg-base-100">
               <span className="sr-only">Previous</span>
               <svg
                 className="w-6 h-6"
@@ -63,7 +60,7 @@ const Hero = ({ className }: { className?: string }) => {
                 />
               </svg>
             </CarouselPrevious>
-            <CarouselNext className="absolute right-4 top-1/2 z-10 -translate-y-1/2 border-border bg-background/90 text-foreground shadow-sm hover:bg-background">
+            <CarouselNext className="btn btn-circle btn-sm absolute right-4 top-1/2 z-10 -translate-y-1/2 border-base-300 bg-base-100/90 text-base-content shadow-sm hover:bg-base-100">
               <span className="sr-only">Next</span>
               <svg
                 className="w-6 h-6"
@@ -98,7 +95,7 @@ const Hero = ({ className }: { className?: string }) => {
       </div>
 
       {/* Exclusive Deals Images */}
-      <div className="w-full overflow-hidden rounded-xl border border-border bg-muted">
+      <div className="card w-full overflow-hidden bg-base-200 shadow-sm">
         <Image
           src="/images/hero1.jpg"
           alt="Exclusive Deal 1"

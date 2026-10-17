@@ -11,14 +11,16 @@ const Deals = ({ className }: { className?: string }) => {
   return <section className={cn("w-full", className)}>
     <div className="flex w-full flex-col gap-5">
       <div>
-        <p className="text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground">Featured</p>
+        <p className="badge badge-primary badge-outline">Featured</p>
         <h2 className="font-heading text-2xl font-semibold">Exclusive Deals</h2>
       </div>
       <div className="grid w-full gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {DealItems.map((deal) => (
-          <div key={deal.id} className="rounded-xl border border-border bg-card p-5 shadow-sm transition-colors hover:bg-muted">
-            <h3 className="font-medium text-card-foreground">{deal.name}</h3>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">{deal.description}</p>
+          <div key={deal.id} className="card bg-base-100 shadow-md transition-colors hover:bg-base-200">
+            <div className="card-body p-5">
+              <h3 className="card-title text-base">{deal.name}</h3>
+              <p className="text-sm leading-6 text-base-content/70">{deal.description}</p>
+            </div>
           </div>
         ))}
       </div>

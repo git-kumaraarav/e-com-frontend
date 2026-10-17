@@ -1,5 +1,3 @@
-import AuthPrompt from "@/components/sections/AuthPrompt";
-
 export default function AddressesPage() {
-  return <AuthPrompt />;
+  return <section className="card bg-base-100 shadow"><form className="card-body gap-4"><h1 className="card-title text-2xl">Shipping addresses</h1><input className="input input-bordered" placeholder="Full name" required /><input className="input input-bordered" placeholder="Address line" required /><div className="grid gap-4 sm:grid-cols-2"><input className="input input-bordered" placeholder="City" required /><input className="input input-bordered" placeholder="Postal code" required /></div><button className="btn btn-primary w-fit">Save address</button></form></section>;
 }

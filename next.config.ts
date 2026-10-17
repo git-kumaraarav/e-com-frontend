@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
         hostname: "fakestoreapi.com",
         pathname: "/img/**",
       },
+      {
+        protocol: "https",
+        hostname: "i5.walmartimages.com",
+        pathname: "/**",
+      },
     ],
   },
   experimental: {
