@@ -2,16 +2,21 @@
 
 import { Palette } from "lucide-react";
 import { ChangeEvent, useEffect, useRef } from "react";
+import { Select } from "@/components/ui/select";
 
 const themes = [
-  { value: "corporate", label: "Corporate" },
-  { value: "light", label: "Light" },
+  { value: "default", label: "Default" },
   { value: "dark", label: "Dark" },
-  { value: "cupcake", label: "Cupcake" },
   { value: "synthwave", label: "Synthwave" },
-  { value: "forest", label: "Forest" },
-  { value: "aqua", label: "Aqua" },
-  { value: "sunset", label: "Sunset" },
+  { value: "midnight-luxe", label: "Midnight Luxe" },
+  { value: "mint-fresh", label: "Mint Fresh" },
+  { value: "sunset-bazaar", label: "Sunset Bazaar" },
+  { value: "paper-ink", label: "Paper & Ink" },
+  { value: "neon-street", label: "Neon Street" },
+  { value: "blush-boutique", label: "Blush Boutique" },
+  { value: "ocean-depot", label: "Ocean Depot" },
+  { value: "terra-home", label: "Terra Home" },
+  { value: "candy-pop", label: "Candy Pop" },
 ] as const;
 
 const defaultTheme = themes[0].value;
@@ -40,9 +45,9 @@ export default function ThemeChanger() {
     <label className="flex items-center gap-2" title="Change theme">
       <Palette className="size-4" aria-hidden="true" />
       <span className="sr-only">Theme</span>
-      <select
+      <Select
         ref={selectRef}
-        className="select select-bordered select-sm w-28"
+        className="w-28"
         defaultValue={defaultTheme}
         onChange={changeTheme}
         aria-label="Theme"
@@ -52,7 +57,7 @@ export default function ThemeChanger() {
             {option.label}
           </option>
         ))}
-      </select>
+      </Select>
     </label>
   );
 }

@@ -1,5 +1,6 @@
 import ProductListing from "@/components/apicalls/products";
 import { Suspense } from "react";
+import { Badge } from "@/components/ui/badge";
 
 type ListingPageProps = {
   params: Promise<{
@@ -11,11 +12,11 @@ const ListingPage = ({ params }: ListingPageProps) => {
   return (
     <div className="w-full">
       <div className="mb-6 space-y-2">
-        <p className="badge badge-primary badge-outline">Collection</p>
+        <Badge>Collection</Badge>
         <h1 className="font-heading text-3xl font-semibold capitalize">Products</h1>
       </div>
 
-      <Suspense fallback={<span className="loading loading-spinner loading-md" aria-label="Loading products" />}>
+      <Suspense fallback={<span className="size-6 animate-spin rounded-full border-2 border-primary border-t-transparent" aria-label="Loading products" />}>
         <ProductListingContent params={params} />
       </Suspense>
     </div>

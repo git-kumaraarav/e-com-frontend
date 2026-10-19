@@ -1,5 +1,4 @@
 import Hero from "@/components/sections/Hero";
-import Deals from "@/components/sections/Deals";
 import FeaturedProducts from "@/components/sections/FeaturedProducts";
 
 export default function Home() {

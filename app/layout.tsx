@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Montserrat } from "next/font/google";
+import { Geist, Geist_Mono, Montserrat, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/sections/Navbar";
 import Footer from "@/components/sections/Footer";
 import { StoreProvider } from "@/lib/store";
 
-const montserratHeading = Montserrat({subsets:['latin'],variable:'--font-heading'});
+const montserratHeading = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-heading",
+});
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,11 +32,25 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", geist.variable, montserratHeading.variable)}
+      className={cn(
+        "h-full",
+        "antialiased",
+        geistSans.variable,
+        geistMono.variable,
+        "font-sans",
+        inter.variable,
+        montserratHeading.variable,
+      )}
     >
-      <body><StoreProvider><main className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 sm:px-6 lg:px-8">
-        <Navbar /><div className="flex-1 py-6">{children}</div><Footer />
-      </main></StoreProvider></body>
+      <body>
+        <StoreProvider>
+          <main className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 sm:px-6 lg:px-8">
+            <Navbar />
+            <div className="flex-1 py-6">{children}</div>
+            <Footer />
+          </main>
+        </StoreProvider>
+      </body>
     </html>
   );
 }

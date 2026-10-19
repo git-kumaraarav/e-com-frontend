@@ -15,14 +15,22 @@ const Navbar = ({ className }: { className?: string }) => {
   return (
     <header
       className={cn(
-        "navbar sticky top-3 z-20 mt-3 w-full rounded-box border border-base-300 bg-base-100/95 shadow-sm backdrop-blur gap-3 justify-between",
+        "sticky top-3 z-20 mt-3 flex w-full items-center justify-between gap-3 rounded-xl border border-border bg-card/95 p-3 shadow-sm backdrop-blur",
         className,
       )}
     >
       <div className="flex shrink-0 items-center gap-2">
         <Link href="/" className="flex items-center gap-2">
-            <Image src={i.logo_url} alt="Logo" width={36} height={36} className="rounded-lg object-cover" />
-            <span className="font-heading text-lg font-semibold">{i.company_name}</span>
+          <Image
+            src={i.logo_url}
+            alt="Logo"
+            width={36}
+            height={36}
+            className="rounded-lg object-cover"
+          />
+          <span className="font-heading text-lg font-semibold">
+            {i.company_name}
+          </span>
         </Link>
       </div>
 
@@ -31,34 +39,62 @@ const Navbar = ({ className }: { className?: string }) => {
       </div>
 
       <nav className="flex gap-1">
-          <ThemeChanger />
-          {user ? (
-            <>
-              <details className="dropdown dropdown-end">
-                <summary className="btn btn-ghost">
-                  <UserIcon className="mr-2 size-4" />
-                  Account
-                </summary>
-                <ul className="menu dropdown-content z-30 mt-2 w-48 rounded-box bg-base-100 p-2 shadow">
-                  <li><Link href="/u">Manage Account</Link></li>
-                </ul>
-              </details>
-              <Link href="/u/addresses" className="btn btn-ghost">
-                  <SettingsIcon className="mr-2 size-4" />
-                  Settings
-              </Link>
-              <Link href="/u/wishlist" className="btn btn-ghost">Wishlist</Link>
-              <Link href="/u/cart" className="btn btn-ghost">
-                  <ShoppingCart className="mr-2 size-4" />
-                  Cart {cartCount > 0 && <span className="badge badge-primary">{cartCount}</span>}
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link href="/login" className="btn btn-ghost">Login</Link>
-              <Link href="/register" className="btn btn-primary">Register</Link>
-            </>
-          )}
+        <ThemeChanger />
+        {user ? (
+          <>
+            <details className="relative">
+              <summary className="inline-flex h-10 cursor-pointer list-none items-center justify-center gap-2 rounded-md px-4 text-sm font-medium hover:bg-muted">
+                <UserIcon className="mr-2 size-4" />
+                Account
+              </summary>
+              <ul className="absolute right-0 z-30 mt-2 w-48 rounded-lg border bg-card p-2 shadow">
+                <li>
+                  <Link href="/u">Manage Account</Link>
+                </li>
+              </ul>
+            </details>
+            <Link
+              href="/u/addresses"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-md px-4 text-sm font-medium hover:bg-muted"
+            >
+              <SettingsIcon className="mr-2 size-4" />
+              Settings
+            </Link>
+            <Link
+              href="/u/wishlist"
+              className="inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-medium hover:bg-muted"
+            >
+              Wishlist
+            </Link>
+            <Link
+              href="/u/cart"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-md px-4 text-sm font-medium hover:bg-muted"
+            >
+              <ShoppingCart className="mr-2 size-4" />
+              Cart{" "}
+              {cartCount > 0 && (
+                <span className="rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
+          </>
+        ) : (
+          <>
+            <Link
+              href="/login"
+              className="inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-medium hover:bg-muted"
+            >
+              Login
+            </Link>
+            <Link
+              href="/register"
+              className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90"
+            >
+              Register
+            </Link>
+          </>
+        )}
       </nav>
     </header>
   );

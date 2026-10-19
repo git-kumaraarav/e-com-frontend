@@ -1,3 +1,7 @@
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+
 export default function AddressesPage() {
-  return <section className="card bg-base-100 shadow"><form className="card-body gap-4"><h1 className="card-title text-2xl">Shipping addresses</h1><input className="input input-bordered" placeholder="Full name" required /><input className="input input-bordered" placeholder="Address line" required /><div className="grid gap-4 sm:grid-cols-2"><input className="input input-bordered" placeholder="City" required /><input className="input input-bordered" placeholder="Postal code" required /></div><button className="btn btn-primary w-fit">Save address</button></form></section>;
+  return <Card className="shadow"><form className="space-y-4"><CardContent className="space-y-4 p-6"><CardTitle className="text-2xl">Shipping addresses</CardTitle><Input placeholder="Full name" required /><Input placeholder="Address line" required /><div className="grid gap-4 sm:grid-cols-2"><Input placeholder="City" required /><Input placeholder="Postal code" required /></div><Button type="submit">Save address</Button></CardContent></form></Card>;
 }

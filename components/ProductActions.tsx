@@ -1,20 +1,24 @@
 "use client";
 
 import { useStore } from "@/lib/store";
-import { productType } from "@/types/product";
+import { productType } from "@/types/backend";
+import { Button } from "@/components/ui/button";
 
 export default function ProductActions({ product }: { product: productType }) {
   const { addToCart, toggleWishlist, isWishlisted } = useStore();
   const wishlisted = isWishlisted(product.id);
 
   return (
-    <div className="card-actions flex-wrap">
-      <button className="btn btn-primary flex-1" onClick={() => addToCart(product)}>
+    <div className="flex flex-wrap gap-2">
+      <Button className="flex-1" onClick={() => addToCart(product)}>
         Add to cart
-      </button>
-      <button className={`btn ${wishlisted ? "btn-secondary" : "btn-outline"}`} onClick={() => toggleWishlist(product)}>
+      </Button>
+      <Button
+        variant={wishlisted ? "secondary" : "outline"}
+        onClick={() => toggleWishlist(product)}
+      >
         {wishlisted ? "Saved" : "Wishlist"}
-      </button>
+      </Button>
     </div>
   );
 }

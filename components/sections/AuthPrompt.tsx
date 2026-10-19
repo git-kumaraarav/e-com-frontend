@@ -1,24 +1,27 @@
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
 export default function AuthPrompt() {
   return (
     <div className="flex min-h-[60vh] items-center justify-center">
-      <div className="card w-full max-w-md bg-base-100 shadow-lg">
-        <div className="card-body">
-          <h2 className="card-title justify-center text-center text-2xl">Sign in to continue</h2>
+      <Card className="w-full max-w-md shadow-lg">
+        <CardContent className="space-y-4 p-6">
+          <CardTitle className="text-center text-2xl">Sign in to continue</CardTitle>
           <div className="space-y-3">
-            <input className="input input-bordered w-full" type="email" placeholder="Email" aria-label="Email" />
-            <input className="input input-bordered w-full" type="password" placeholder="Password" aria-label="Password" />
-            <button className="btn btn-primary w-full">Login</button>
+            <Input className="w-full" type="email" placeholder="Email" aria-label="Email" />
+            <Input className="w-full" type="password" placeholder="Password" aria-label="Password" />
+            <Button className="w-full">Login</Button>
           </div>
-          <div className="card-actions justify-center">
-            <p className="text-sm text-base-content/70">
+          <div className="flex justify-center">
+            <p className="text-sm text-muted-foreground">
             Don&apos;t have an account?{" "}
-              <Link href="/register" className="link link-primary">Register</Link>
+              <Link href="/register" className="font-medium text-primary hover:underline">Register</Link>
             </p>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

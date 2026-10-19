@@ -1,19 +1,30 @@
 import ProductListing from "@/components/apicalls/products";
 import { FetchAPI } from "@/components/utils/fetchAPI";
-import { productType } from "@/types/product";
+import { productType } from "@/types/backend";
+import { Alert } from "@/components/ui/alert";
 
 export const instant = false;
 
-export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+export default async function SearchPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
   const { q = "" } = await searchParams;
   const products = await FetchAPI<productType[]>("/products");
   const matches = products.filter((product) =>
-    `${product.title} ${product.description} ${product.category}`.toLowerCase().includes(q.toLowerCase()),
+    `${product.title} ${product.description} ${product.category}`
+      .toLowerCase()
+      .includes(q.toLowerCase()),
   );
   return (
     <section className="space-y-6">
       <h1 className="text-3xl font-bold">Search results for “{q}”</h1>
-      {matches.length ? <ProductListing products={matches} /> : <div className="alert">No products matched your search.</div>}
+      {matches.length ? (
+        <ProductListing products={matches} />
+      ) : (
+        <Alert>No products matched your search.</Alert>
+      )}
     </section>
   );
 }

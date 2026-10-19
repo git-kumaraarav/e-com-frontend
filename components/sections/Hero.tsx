@@ -40,10 +40,10 @@ const Hero = ({ className }: { className?: string }) => {
       className={cn("flex w-full flex-col gap-6", className)}
     >
       {/* carousel */}
-      <div className="relative w-full overflow-hidden rounded-box border border-base-300 bg-base-200 shadow-sm">
+      <div className="relative w-full overflow-hidden rounded-xl border border-border bg-muted shadow-sm">
         <Carousel plugins={[Autoplay({ delay: 3000 })]} className="h-full w-full">
           <CarouselContent className="h-full w-full">
-            <CarouselPrevious className="btn btn-circle btn-sm absolute left-4 top-1/2 z-10 -translate-y-1/2 border-base-300 bg-base-100/90 text-base-content shadow-sm hover:bg-base-100">
+            <CarouselPrevious className="absolute left-4 top-1/2 z-10 size-9 -translate-y-1/2 rounded-full border border-border bg-card/90 text-foreground shadow-sm hover:bg-card">
               <span className="sr-only">Previous</span>
               <svg
                 className="w-6 h-6"
@@ -60,7 +60,7 @@ const Hero = ({ className }: { className?: string }) => {
                 />
               </svg>
             </CarouselPrevious>
-            <CarouselNext className="btn btn-circle btn-sm absolute right-4 top-1/2 z-10 -translate-y-1/2 border-base-300 bg-base-100/90 text-base-content shadow-sm hover:bg-base-100">
+            <CarouselNext className="absolute right-4 top-1/2 z-10 size-9 -translate-y-1/2 rounded-full border border-border bg-card/90 text-foreground shadow-sm hover:bg-card">
               <span className="sr-only">Next</span>
               <svg
                 className="w-6 h-6"
@@ -95,7 +95,7 @@ const Hero = ({ className }: { className?: string }) => {
       </div>
 
       {/* Exclusive Deals Images */}
-      <div className="card w-full overflow-hidden bg-base-200 shadow-sm">
+      <div className="w-full overflow-hidden rounded-xl bg-muted shadow-sm">
         <Image
           src="/images/hero1.jpg"
           alt="Exclusive Deal 1"

@@ -1,10 +1,17 @@
 "use client";
 
-import { productType } from "@/types/product";
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { productType } from "@/types/backend";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { apiRequest } from "./api";
 
 type CartItem = productType & { quantity: number };
-type User = { id?: number; name?: string; email: string };
+type User = { name?: string; email: string };
 type StoreContextValue = {
   cart: CartItem[];
   wishlist: productType[];
@@ -31,43 +38,75 @@ function readStorage<T>(key: string, fallback: T): T {
 }
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>(() => typeof window === "undefined" ? [] : readStorage("commerce-cart", []));
-  const [wishlist, setWishlist] = useState<productType[]>(() => typeof window === "undefined" ? [] : readStorage("commerce-wishlist", []));
-  const [user, setUser] = useState<User | null>(() => typeof window === "undefined" ? null : readStorage("commerce-user", null));
+  const [cart, setCart] = useState<CartItem[]>(() =>
+    typeof window === "undefined" ? [] : readStorage("user-cart", []),
+  );
+  const [wishlist, setWishlist] = useState<productType[]>(() =>
+    typeof window === "undefined" ? [] : readStorage("user-wishlist", []),
+  );
+  const [user, setUser] = useState<User | null>(null);
 
-  useEffect(() => localStorage.setItem("commerce-cart", JSON.stringify(cart)), [cart]);
-  useEffect(() => localStorage.setItem("commerce-wishlist", JSON.stringify(wishlist)), [wishlist]);
+  useEffect(
+    () => localStorage.setItem("user-cart", JSON.stringify(cart)),
+    [cart],
+  );
+
+  useEffect(
+    () => localStorage.setItem("user-wishlist", JSON.stringify(wishlist)),
+    [wishlist],
+  );
+
   useEffect(() => {
-    if (user) localStorage.setItem("commerce-user", JSON.stringify(user));
-    else localStorage.removeItem("commerce-user");
+    if (user) localStorage.setItem("user", JSON.stringify(user));
+    else localStorage.removeItem("user");
   }, [user]);
 
-  const value = useMemo<StoreContextValue>(() => ({
-    cart,
-    wishlist,
-    user,
-    cartCount: cart.reduce((sum, item) => sum + item.quantity, 0),
-    cartTotal: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
-    addToCart: (product) => setCart((items) => {
-      const existing = items.find((item) => item.id === product.id);
-      return existing
-        ? items.map((item) => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item)
-        : [...items, { ...product, quantity: 1 }];
+  const value = useMemo<StoreContextValue>(
+    () => ({
+      cart,
+      wishlist,
+      user,
+      cartCount: cart.reduce((sum, item) => sum + item.quantity, 0),
+      cartTotal: cart.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0,
+      ),
+      addToCart: (product) =>
+        setCart((items) => {
+          const existing = items.find((item) => item.id === product.id);
+          return existing
+            ? items.map((item) =>
+                item.id === product.id
+                  ? { ...item, quantity: item.quantity + 1 }
+                  : item,
+              )
+            : [...items, { ...product, quantity: 1 }];
+        }),
+      updateQuantity: (id, quantity) =>
+        setCart((items) =>
+          quantity > 0
+            ? items.map((item) =>
+                item.id === id ? { ...item, quantity } : item,
+              )
+            : items.filter((item) => item.id !== id),
+        ),
+      removeFromCart: (id) =>
+        setCart((items) => items.filter((item) => item.id !== id)),
+      toggleWishlist: (product) =>
+        setWishlist((items) =>
+          items.some((item) => item.id === product.id)
+            ? items.filter((item) => item.id !== product.id)
+            : [...items, product],
+        ),
+      isWishlisted: (id) => wishlist.some((item) => item.id === id),
+      setUser,
     }),
-    updateQuantity: (id, quantity) => setCart((items) =>
-      quantity > 0 ? items.map((item) => item.id === id ? { ...item, quantity } : item) : items.filter((item) => item.id !== id),
-    ),
-    removeFromCart: (id) => setCart((items) => items.filter((item) => item.id !== id)),
-    toggleWishlist: (product) => setWishlist((items) =>
-      items.some((item) => item.id === product.id)
-        ? items.filter((item) => item.id !== product.id)
-        : [...items, product],
-    ),
-    isWishlisted: (id) => wishlist.some((item) => item.id === id),
-    setUser,
-  }), [cart, user, wishlist]);
+    [cart, user, wishlist],
+  );
 
-  return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
+  return (
+    <StoreContext.Provider value={value}>{children}</StoreContext.Provider>
+  );
 }
 
 export function useStore() {
