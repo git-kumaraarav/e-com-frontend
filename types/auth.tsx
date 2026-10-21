@@ -7,4 +7,9 @@ export type AuthFormErrors = {
 
 export type AuthFormState = {
   errors: AuthFormErrors; 
+  registered?: boolean;
+  user?: {
+    name: string;
+    email: string;
+  }
 }

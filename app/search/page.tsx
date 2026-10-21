@@ -1,6 +1,5 @@
-import ProductListing from "@/components/apicalls/products";
-import { FetchAPI } from "@/components/utils/fetchAPI";
-import { productType } from "@/types/backend";
+import { ProductListing } from "@/components/ProductListing";
+import { listProducts, normalizeProduct } from "@/lib/api";
 import { Alert } from "@/components/ui/alert";
 
 export const instant = false;
@@ -11,7 +10,7 @@ export default async function SearchPage({
   searchParams: Promise<{ q?: string }>;
 }) {
   const { q = "" } = await searchParams;
-  const products = await FetchAPI<productType[]>("/products");
+  const products = (await listProducts()).map(normalizeProduct);
   const matches = products.filter((product) =>
     `${product.title} ${product.description} ${product.category}`
       .toLowerCase()

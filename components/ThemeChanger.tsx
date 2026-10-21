@@ -1,8 +1,8 @@
 "use client";
 
 import { Palette } from "lucide-react";
-import { ChangeEvent, useEffect, useRef } from "react";
-import { Select } from "@/components/ui/select";
+import { useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 const themes = [
   { value: "default", label: "Default" },
@@ -19,45 +19,50 @@ const themes = [
   { value: "candy-pop", label: "Candy Pop" },
 ] as const;
 
+type ThemeValue = (typeof themes)[number]["value"];
+
 const defaultTheme = themes[0].value;
 const storageKey = "commerce-theme";
 
 export default function ThemeChanger() {
-  const selectRef = useRef<HTMLSelectElement>(null);
+  const currentThemeRef = useRef<ThemeValue>(defaultTheme);
+  const [currentTheme, setCurrentTheme] =
+    useState<ThemeValue>(defaultTheme);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem(storageKey);
     const nextTheme = themes.some((option) => option.value === savedTheme)
-      ? savedTheme!
+      ? (savedTheme as ThemeValue)
       : defaultTheme;
 
-    if (selectRef.current) selectRef.current.value = nextTheme;
+    currentThemeRef.current = nextTheme;
     document.documentElement.setAttribute("data-theme", nextTheme);
   }, []);
 
-  function changeTheme(event: ChangeEvent<HTMLSelectElement>) {
-    const nextTheme = event.target.value;
+  function cycleTheme() {
+    const currentIndex = themes.findIndex(
+      (theme) => theme.value === currentThemeRef.current,
+    );
+    const nextTheme = themes[(currentIndex + 1) % themes.length].value;
+
+    currentThemeRef.current = nextTheme;
+    setCurrentTheme(nextTheme);
     localStorage.setItem(storageKey, nextTheme);
     document.documentElement.setAttribute("data-theme", nextTheme);
   }
 
+  const activeTheme = themes.find((theme) => theme.value === currentTheme);
+
   return (
-    <label className="flex items-center gap-2" title="Change theme">
-      <Palette className="size-4" aria-hidden="true" />
-      <span className="sr-only">Theme</span>
-      <Select
-        ref={selectRef}
-        className="w-28"
-        defaultValue={defaultTheme}
-        onChange={changeTheme}
-        aria-label="Theme"
-      >
-        {themes.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </Select>
-    </label>
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={cycleTheme}
+      title={`Theme: ${activeTheme?.label ?? "Default"}. Click to change`}
+      aria-label={`Theme: ${activeTheme?.label ?? "Default"}. Click to change`}
+      className = "hover:cursor-pointer"
+    >
+      <Palette className="size-4 " aria-hidden="true" />
+    </Button>
   );
 }

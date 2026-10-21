@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import Image from "next/image";
-import { FetchAPI } from "@/components/utils/fetchAPI";
-import { productType } from "@/types/backend";
+import { Product } from "@/types/backend";
 import ProductActions from "@/components/ProductActions";
 import { Badge } from "@/components/ui/badge";
+import { getProduct, normalizeProduct } from "@/lib/api";
 
 type ProductDetailsPageProps = {
   params: Promise<{
@@ -11,6 +11,8 @@ type ProductDetailsPageProps = {
     product: string;
   }>;
 };
+
+export const instant = false;
 
 function ProductDetails({ params }: ProductDetailsPageProps) {
   return (
@@ -22,8 +24,14 @@ function ProductDetails({ params }: ProductDetailsPageProps) {
 
 async function ProductDetailsContent({ params }: ProductDetailsPageProps) {
   const { product } = await params;
+  let productDetails: Product | null = null;
+  try {
+    productDetails = normalizeProduct(await getProduct(product));
+  } catch (error) {
+    console.error("Unable to load product details:", error);
+  }
 
-  const productDetails = await FetchAPI<productType>(`/products/${product}`);
+  if (!productDetails) return <p>Product unavailable.</p>;
 
   return (
     <article className="flex w-full max-w-6xl flex-col overflow-hidden rounded-xl border bg-card shadow-md md:flex-row">

@@ -3,11 +3,20 @@
 import { cn } from "@/lib/utils";
 import i from "@/public/company_info.json";
 import Image from "next/image";
-import { SettingsIcon, ShoppingCart, UserIcon } from "lucide-react";
+import { ShoppingCart, UserIcon } from "lucide-react";
 import Link from "next/link";
 import SearchBox from "@/components/SearchBox";
 import { useStore } from "@/lib/store";
 import ThemeChanger from "@/components/ThemeChanger";
+
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
 
 const Navbar = ({ className }: { className?: string }) => {
   const { user, cartCount } = useStore();
@@ -38,62 +47,91 @@ const Navbar = ({ className }: { className?: string }) => {
         <SearchBox />
       </div>
 
-      <nav className="flex gap-1">
+      <nav className="flex items-center gap-1">
         <ThemeChanger />
         {user ? (
-          <>
-            <details className="relative">
-              <summary className="inline-flex h-10 cursor-pointer list-none items-center justify-center gap-2 rounded-md px-4 text-sm font-medium hover:bg-muted">
-                <UserIcon className="mr-2 size-4" />
-                Account
-              </summary>
-              <ul className="absolute right-0 z-30 mt-2 w-48 rounded-lg border bg-card p-2 shadow">
-                <li>
-                  <Link href="/u">Manage Account</Link>
-                </li>
-              </ul>
-            </details>
-            <Link
-              href="/u/addresses"
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-md px-4 text-sm font-medium hover:bg-muted"
-            >
-              <SettingsIcon className="mr-2 size-4" />
-              Settings
-            </Link>
-            <Link
-              href="/u/wishlist"
-              className="inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-medium hover:bg-muted"
-            >
-              Wishlist
-            </Link>
-            <Link
-              href="/u/cart"
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-md px-4 text-sm font-medium hover:bg-muted"
-            >
-              <ShoppingCart className="mr-2 size-4" />
-              Cart{" "}
-              {cartCount > 0 && (
-                <span className="rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-          </>
+          <NavigationMenu align="end">
+            <NavigationMenuList className="flex items-center gap-1">
+              <NavigationMenuItem>
+                <NavigationMenuTrigger>
+                  <UserIcon className="size-4" />
+                  Account
+                </NavigationMenuTrigger>
+                <NavigationMenuContent className="w-48 bg-card text-foreground ">
+                  <div className="grid gap-1">
+                    <NavigationMenuLink
+                      render={<Link href="/u" />}
+                      closeOnClick
+                    >
+                      Manage Account
+                    </NavigationMenuLink>
+                    <NavigationMenuLink
+                      render={<Link href="/u" />}
+                      closeOnClick
+                    >
+                      Settings
+                    </NavigationMenuLink>
+                    <NavigationMenuLink
+                      render={<Link href="/u" />}
+                      closeOnClick
+                    >
+                      Logout
+                    </NavigationMenuLink>
+                    <NavigationMenuLink
+                      render={<Link href="/u" />}
+                      closeOnClick
+                    >
+                      Contact Us
+                    </NavigationMenuLink>
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink
+                  render={<Link href="/u/wishlist" />}
+                  closeOnClick
+                >
+                  Wishlist
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink
+                  render={<Link href="/u/cart" />}
+                  closeOnClick
+                >
+                  <ShoppingCart className="size-4" />
+                  Cart
+                  {cartCount > 0 && (
+                    <span className="rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
+                      {cartCount}
+                    </span>
+                  )}
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
         ) : (
-          <>
-            <Link
-              href="/login"
-              className="inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-medium hover:bg-muted"
-            >
-              Login
-            </Link>
-            <Link
-              href="/register"
-              className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90"
-            >
-              Register
-            </Link>
-          </>
+          <NavigationMenu align="end">
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <NavigationMenuLink
+                  render={<Link href="/login" />}
+                  closeOnClick
+                >
+                  Login
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink
+                  render={<Link href="/register" />}
+                  className="bg-primary text-primary-foreground hover:bg-primary/90"
+                  closeOnClick
+                >
+                  Register
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
         )}
       </nav>
     </header>

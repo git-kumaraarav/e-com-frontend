@@ -2,15 +2,17 @@
 
 import Link from "next/link";
 import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useStore } from "@/lib/store";
-import { apiRequest } from "@/lib/api";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Input, Textarea } from "@/components/ui/input";
+import { createOrderAction } from "@/components/actions/orders";
 
 export default function CheckoutPage() {
   const { cart, cartTotal } = useStore();
+  const router = useRouter();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -20,16 +22,11 @@ export default function CheckoutPage() {
     setLoading(true);
     const form = new FormData(event.currentTarget);
     try {
-      const result = await apiRequest<{ url?: string }>("/checkout/session", {
-        method: "POST",
-        body: JSON.stringify({
-          items: cart.map(({ id, quantity }) => ({ product_id: id, quantity })),
-          email: form.get("email"),
-          address: form.get("address"),
-        }),
-      });
-      if (result.url) window.location.assign(result.url);
-      else setError("Checkout session created. Connect the returned session to your payment page.");
+      await createOrderAction(
+        String(form.get("address") ?? ""),
+        cart.map(({ id, quantity }) => ({ product_id: id, quantity })),
+      );
+      router.push("/u/orders-and-returns");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to start checkout.");
     } finally {

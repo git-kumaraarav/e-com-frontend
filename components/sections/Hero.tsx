@@ -34,7 +34,17 @@ const carouselItems = [
   },
 ];
 
-const Hero = ({ className }: { className?: string }) => {
+type HeroBanner = { id: number; image?: string; link?: string; title?: string };
+
+const Hero = ({ className, banners = [] }: { className?: string; banners?: HeroBanner[] }) => {
+  const slides = banners.length
+    ? banners.map((banner) => ({
+        id: banner.id,
+        imageUrl: banner.image || "/images/hero1.jpg",
+        url: banner.link || "/all",
+        altText: banner.title || "Sale banner",
+      }))
+    : carouselItems;
   return (
     <div
       className={cn("flex w-full flex-col gap-6", className)}
@@ -77,7 +87,7 @@ const Hero = ({ className }: { className?: string }) => {
                 />
               </svg>
             </CarouselNext>
-            {carouselItems.map((item) => (
+            {slides.map((item) => (
               <CarouselItem key={item.id} className="w-full">
                 <Link href={item.url}>
                   <Image

@@ -1,10 +1,10 @@
 "use client";
 
 import { useStore } from "@/lib/store";
-import { productType } from "@/types/backend";
+import { Product } from "@/types/backend";
 import { Button } from "@/components/ui/button";
 
-export default function ProductActions({ product }: { product: productType }) {
+export default function ProductActions({ product }: { product: Product }) {
   const { addToCart, toggleWishlist, isWishlisted } = useStore();
   const wishlisted = isWishlisted(product.id);
 

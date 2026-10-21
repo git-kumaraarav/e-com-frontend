@@ -1,15 +1,16 @@
-import ProductListing from "@/components/apicalls/products";
-import { FetchAPI } from "@/components/utils/fetchAPI";
-import { BackendResponseFormat } from "@/types/backend";
 import Link from "next/link";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { listProducts, normalizeProduct } from "@/lib/api";
+import { Product } from "@/types/backend";
+import {ProductListing} from "@/components/ProductListing";
+
 
 export default async function FeaturedProducts() {
-  let products: BackendResponseFormat[];
+  let products: Product[];
 
   try {
-    products = await FetchAPI<BackendResponseFormat[]>("/products");
+    products = (await listProducts()).map(normalizeProduct);
   } catch (error) {
     console.error("Error fetching featured products:", error);
     return (

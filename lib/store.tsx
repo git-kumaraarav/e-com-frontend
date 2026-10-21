@@ -1,6 +1,5 @@
 "use client";
-
-import { productType } from "@/types/backend";
+import { Product } from "@/types/backend";
 import React, {
   createContext,
   useContext,
@@ -8,20 +7,19 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { apiRequest } from "./api";
 
-type CartItem = productType & { quantity: number };
+type CartItem = Product & { quantity: number };
 type User = { name?: string; email: string };
 type StoreContextValue = {
   cart: CartItem[];
-  wishlist: productType[];
+  wishlist: Product[];
   user: User | null;
   cartCount: number;
   cartTotal: number;
-  addToCart: (product: productType) => void;
+  addToCart: (product: Product) => void;
   updateQuantity: (id: number, quantity: number) => void;
   removeFromCart: (id: number) => void;
-  toggleWishlist: (product: productType) => void;
+  toggleWishlist: (product: Product) => void;
   isWishlisted: (id: number) => boolean;
   setUser: (user: User | null) => void;
 };
@@ -41,10 +39,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>(() =>
     typeof window === "undefined" ? [] : readStorage("user-cart", []),
   );
-  const [wishlist, setWishlist] = useState<productType[]>(() =>
+  const [wishlist, setWishlist] = useState<Product[]>(() =>
     typeof window === "undefined" ? [] : readStorage("user-wishlist", []),
   );
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => 
+    typeof window === "undefined" ? null : readStorage("user", null)
+  );
 
   useEffect(
     () => localStorage.setItem("user-cart", JSON.stringify(cart)),
