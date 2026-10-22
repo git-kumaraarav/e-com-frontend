@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
+    dangerouslyAllowLocalIP:true, 
     remotePatterns: [
       {
         protocol: "https",
@@ -12,6 +13,11 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "i5.walmartimages.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
         pathname: "/**",
       },
     ],

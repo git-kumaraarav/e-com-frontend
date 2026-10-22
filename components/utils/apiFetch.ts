@@ -4,7 +4,8 @@ import { cookies } from "next/headers";
 import { UnauthorizedError } from "@/lib/errors";
 import { refreshAccessToken } from "@/components/utils/authUtils";
 
-const backendUrl = process.env.BACKEND_ROOT_URL ?? process.env.NEXT_PUBLIC_API_URL;
+const backendUrl =
+  process.env.BACKEND_ROOT_URL ?? process.env.NEXT_PUBLIC_API_URL;
 
 function resolveUrl(path: string) {
   if (/^https?:\/\//.test(path)) return path;
@@ -17,13 +18,23 @@ export default async function apiFetch<T>(
   options: RequestInit = {},
   hasRetried = false,
 ): Promise<T> {
-  const publicRequest = (options.method ?? "GET") === "GET" &&
-    (path === "/api/products/" || path === "/api/banners/" || path.startsWith("/api/products/") || path.startsWith("/api/banners/"));
+  const publicRequest =
+    (options.method ?? "GET") === "GET" &&
+    (path === "/api/products/" ||
+      path === "/api/banners/" ||
+      path === "/api/event-banners/" ||
+      path.startsWith("/api/products/") ||
+      path.startsWith("/api/banners/") ||
+      path.startsWith("/api/event-banners/"));
   const cookieStore = publicRequest ? null : await cookies();
   const accessToken = cookieStore?.get("accessToken")?.value;
   const headers = new Headers(options.headers);
   headers.set("Accept", "application/json");
-  if (options.body && !(options.body instanceof FormData) && !headers.has("Content-Type")) {
+  if (
+    options.body &&
+    !(options.body instanceof FormData) &&
+    !headers.has("Content-Type")
+  ) {
     headers.set("Content-Type", "application/json");
   }
   if (accessToken) headers.set("Authorization", `Bearer ${accessToken}`);
@@ -36,14 +47,17 @@ export default async function apiFetch<T>(
 
   if (response.status === 401 && !hasRetried) {
     const refreshToken = cookieStore?.get("refreshToken")?.value;
-    if (!refreshToken) throw new UnauthorizedError("Please log in to continue.");
+    if (!refreshToken)
+      throw new UnauthorizedError("Please log in to continue.");
     await refreshAccessToken(refreshToken);
     return apiFetch<T>(path, options, true);
   }
 
   if (!response.ok) {
     const detail = await response.text();
-    throw new Error(`API request failed (${response.status}): ${detail || response.statusText}`);
+    throw new Error(
+      `API request failed (${response.status}): ${detail || response.statusText}`,
+    );
   }
 
   if (response.status === 204) return undefined as T;

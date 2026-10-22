@@ -39,12 +39,26 @@ export type Order = {
 export type Banner = {
   id: number;
   title: string;
-  subtitle?: string;
-  image?: string;
-  link?: string;
+  description?: string;
+  altText: string;
+  imageUrl: string;
+  url: string;
   is_active?: boolean;
   starts_at?: string;
   ends_at?: string;
+};
+
+export type CartItem = {
+  id: number;
+  user?: number;
+  product: number | Product;
+  quantity: number;
+};
+
+export type WishlistItem = {
+  id: number;
+  user?: number;
+  product: number | Product;
 };
 
 export type BackendResponseFormat<T = unknown> = {

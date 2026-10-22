@@ -45,6 +45,26 @@
       "key": "order_id",
       "value": "1",
       "type": "string"
+    },
+    {
+      "key": "event_banner_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "cart_item_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "wishlist_item_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "1",
+      "type": "string"
     }
   ],
   "auth": {
@@ -600,6 +620,531 @@
                 "api",
                 "banners",
                 "{{banner_id}}"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Event sale banners",
+      "item": [
+        {
+          "name": "List active event banners",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/event-banners/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "event-banners"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Get event banner",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/event-banners/{{event_banner_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "event-banners",
+                "{{event_banner_id}}"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Create event banner (admin/staff)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/event-banners/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "event-banners"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "title",
+                  "value": "Black Friday event",
+                  "type": "text"
+                },
+                {
+                  "key": "altText",
+                  "value": "Black Friday sale",
+                  "type": "text"
+                },
+                {
+                  "key": "imageUrl",
+                  "type": "file",
+                  "src": ""
+                },
+                {
+                  "key": "url",
+                  "value": "https://example.com/black-friday",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Annual Black Friday offers",
+                  "type": "text"
+                },
+                {
+                  "key": "starts_at",
+                  "value": "2026-11-20T00:00:00Z",
+                  "type": "text"
+                },
+                {
+                  "key": "ends_at",
+                  "value": "2026-11-30T23:59:59Z",
+                  "type": "text"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update event banner (admin/staff)",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{base_url}}/api/event-banners/{{event_banner_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "event-banners",
+                "{{event_banner_id}}"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "title",
+                  "value": "Extended Black Friday event",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Extended annual offers",
+                  "type": "text"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete event banner (admin/staff)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/api/event-banners/{{event_banner_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "event-banners",
+                "{{event_banner_id}}"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "List cart items",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/u/cart-items/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "u",
+                "cart-items"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get cart item",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/u/cart-items/{{cart_item_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "u",
+                "cart-items",
+                "{{cart_item_id}}"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Add cart item",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/u/cart-items/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "u",
+                "cart-items"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user\": \"{{user_id}}\",\n  \"product\": \"{{product_id}}\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Update cart item",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{base_url}}/api/u/cart-items/{{cart_item_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "u",
+                "cart-items",
+                "{{cart_item_id}}"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Remove cart item",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/api/u/cart-items/{{cart_item_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "u",
+                "cart-items",
+                "{{cart_item_id}}"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Wish list",
+      "item": [
+        {
+          "name": "List wish list items",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/u/wish-list/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "u",
+                "wish-list"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get wish list item",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/u/wish-list/{{wishlist_item_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "u",
+                "wish-list",
+                "{{wishlist_item_id}}"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Add wish list item",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/u/wish-list/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "u",
+                "wish-list"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user\": \"{{user_id}}\",\n  \"product\": \"{{product_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Update wish list item",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{base_url}}/api/u/wish-list/{{wishlist_item_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "u",
+                "wish-list",
+                "{{wishlist_item_id}}"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product\": \"{{product_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Remove wish list item",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/api/u/wish-list/{{wishlist_item_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "u",
+                "wish-list",
+                "{{wishlist_item_id}}"
               ]
             },
             "auth": {

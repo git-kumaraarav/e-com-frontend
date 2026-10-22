@@ -36,30 +36,41 @@ function readStorage<T>(key: string, fallback: T): T {
 }
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>(() =>
-    typeof window === "undefined" ? [] : readStorage("user-cart", []),
-  );
-  const [wishlist, setWishlist] = useState<Product[]>(() =>
-    typeof window === "undefined" ? [] : readStorage("user-wishlist", []),
-  );
-  const [user, setUser] = useState<User | null>(() => 
-    typeof window === "undefined" ? null : readStorage("user", null)
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [wishlist, setWishlist] = useState<Product[]>([]);
+  const [user, setUser] = useState<User | null>(null);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    // Storage is only available after mount, so hydrate the deterministic server state here.
+    /* eslint-disable react-hooks/set-state-in-effect */
+    setCart(readStorage("user-cart", []));
+    setWishlist(readStorage("user-wishlist", []));
+    setUser(readStorage("user", null));
+    setHydrated(true);
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, []);
+
+  useEffect(
+    () => {
+      if (hydrated) localStorage.setItem("user-cart", JSON.stringify(cart));
+    },
+    [cart, hydrated],
   );
 
   useEffect(
-    () => localStorage.setItem("user-cart", JSON.stringify(cart)),
-    [cart],
-  );
-
-  useEffect(
-    () => localStorage.setItem("user-wishlist", JSON.stringify(wishlist)),
-    [wishlist],
+    () => {
+      if (hydrated)
+        localStorage.setItem("user-wishlist", JSON.stringify(wishlist));
+    },
+    [hydrated, wishlist],
   );
 
   useEffect(() => {
+    if (!hydrated) return;
     if (user) localStorage.setItem("user", JSON.stringify(user));
     else localStorage.removeItem("user");
-  }, [user]);
+  }, [hydrated, user]);
 
   const value = useMemo<StoreContextValue>(
     () => ({

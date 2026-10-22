@@ -1,4 +1,4 @@
-"use client";
+"use client"; 
 
 import { cn } from "@/lib/utils";
 import i from "@/public/company_info.json";
