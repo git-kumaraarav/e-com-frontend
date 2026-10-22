@@ -22,6 +22,7 @@ type StoreContextValue = {
   toggleWishlist: (product: Product) => void;
   isWishlisted: (id: number) => boolean;
   setUser: (user: User | null) => void;
+  clearUserData: () => void;
 };
 
 const StoreContext = createContext<StoreContextValue | null>(null);
@@ -111,6 +112,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         ),
       isWishlisted: (id) => wishlist.some((item) => item.id === id),
       setUser,
+      clearUserData: () => {
+        setCart([]);
+        setWishlist([]);
+        setUser(null);
+      },
     }),
     [cart, user, wishlist],
   );

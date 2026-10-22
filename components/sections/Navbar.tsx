@@ -1,13 +1,16 @@
-"use client"; 
+"use client";
 
 import { cn } from "@/lib/utils";
 import i from "@/public/company_info.json";
 import Image from "next/image";
 import { ShoppingCart, UserIcon } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 import SearchBox from "@/components/SearchBox";
 import { useStore } from "@/lib/store";
 import ThemeChanger from "@/components/ThemeChanger";
+import { logoutAction } from "@/components/actions/logout";
 
 import {
   NavigationMenu,
@@ -17,9 +20,26 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-
 const Navbar = ({ className }: { className?: string }) => {
-  const { user, cartCount } = useStore();
+  const { user, cartCount, clearUserData } = useStore();
+  const router = useRouter();
+  const [isLoggingOut, startLogout] = useTransition();
+  const [logoutError, setLogoutError] = useState<string | null>(null);
+
+  const logout = () => {
+    setLogoutError(null);
+    startLogout(async () => {
+      try {
+        await logoutAction();
+        clearUserData();
+        router.push("/");
+        router.refresh();
+      } catch (error) {
+        console.error("Logout failed:", error);
+        setLogoutError("Unable to log out. Please try again.");
+      }
+    });
+  };
 
   return (
     <header
@@ -49,6 +69,11 @@ const Navbar = ({ className }: { className?: string }) => {
 
       <nav className="flex items-center gap-1">
         <ThemeChanger />
+        {logoutError && (
+          <p className="text-sm text-destructive" role="alert">
+            {logoutError}
+          </p>
+        )}
         {user ? (
           <NavigationMenu align="end">
             <NavigationMenuList className="flex items-center gap-1">
@@ -72,10 +97,17 @@ const Navbar = ({ className }: { className?: string }) => {
                       Settings
                     </NavigationMenuLink>
                     <NavigationMenuLink
-                      render={<Link href="/u" />}
+                      render={
+                        <button
+                          type="button"
+                          disabled={isLoggingOut}
+                          aria-busy={isLoggingOut}
+                        />
+                      }
                       closeOnClick
+                      onClick={logout}
                     >
-                      Logout
+                      {isLoggingOut ? "Logging out..." : "Logout"}
                     </NavigationMenuLink>
                     <NavigationMenuLink
                       render={<Link href="/u" />}

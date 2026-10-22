@@ -48,11 +48,10 @@ export const refreshAccessToken = async (refreshToken: string) => {
   await setTokensToCookies(data.access, data.refresh ?? refreshToken);
 };
 
-export const logout = async () => {
+export const deleteTokensFromCookie = async () => {
   const cookieStore = await cookies();
   cookieStore.delete("accessToken");
   cookieStore.delete("refreshToken");
-  redirect("/");
 };
 
 export const getUserDetails = async (): Promise<BackendUser> => {
