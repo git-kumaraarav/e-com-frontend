@@ -18,7 +18,7 @@ export const ProductListing = async ({
 
           <div className="flex flex-col items-start">
             <Link
-              href={`/${product.category || "products"}/${product.id}`}
+              href={`/${product.category || "products"}/${product.slug}`}
               className="text-blue-500 hover:underline"
             >
               <h2 className="text-lg font-semibold">{product.title || product.name}</h2>

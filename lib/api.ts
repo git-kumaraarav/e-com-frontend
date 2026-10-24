@@ -15,8 +15,8 @@ import type {
 export const listProducts = async (): Promise<Product[]> =>
   unwrap(await apiFetch<ProductListResponse>("/api/products/")) as Product[];
 
-export const getProduct = async (id: string | number) =>
-  unwrap(await apiFetch<ProductResponse>(`/api/products/${id}/`));
+export const getProduct = async (slug: string) =>
+  unwrap(await apiFetch<ProductResponse>(`/api/products/${slug}/`));
 
 export const listBanners = async (): Promise<Banner[]> =>
   unwrap(

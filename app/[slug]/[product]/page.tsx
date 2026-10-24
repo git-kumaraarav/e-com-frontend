@@ -23,10 +23,10 @@ function ProductDetails({ params }: ProductDetailsPageProps) {
 }
 
 async function ProductDetailsContent({ params }: ProductDetailsPageProps) {
-  const { product } = await params;
+  const { product: productSlug } = await params;
   let productDetails: Product | null = null;
   try {
-    productDetails = normalizeProduct(await getProduct(product));
+    productDetails = normalizeProduct(await getProduct(productSlug));
   } catch (error) {
     console.error("Unable to load product details:", error);
   }

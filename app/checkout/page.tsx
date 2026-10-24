@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Input, Textarea } from "@/components/ui/input";
 import { createOrderAction } from "@/components/actions/orders";
+import { CreditCard } from "lucide-react";
 
 export default function CheckoutPage() {
   const { cart, cartTotal } = useStore();
@@ -42,7 +43,14 @@ export default function CheckoutPage() {
         <label className="space-y-2"><span className="text-sm font-medium">Email</span><Input required name="email" type="email" /></label>
         <label className="space-y-2"><span className="text-sm font-medium">Shipping address</span><Textarea required name="address" rows={4} /></label>
         {error && <Alert variant="destructive">{error}</Alert>}
-        <Button type="submit" disabled={loading} className="mt-2">{loading ? <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" /> : "Continue to payment"}</Button>
+        <Button type="submit" disabled={loading} className="mt-2">
+          {loading ? (
+            <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+          ) : (
+            <CreditCard className="size-4" aria-hidden="true" />
+          )}
+          Continue to payment
+        </Button>
       </CardContent></Card></form>
       <Card className="h-fit shadow"><CardContent><CardTitle>Total</CardTitle><p className="text-2xl font-bold">${cartTotal.toFixed(2)}</p></CardContent></Card>
     </div>

@@ -3,7 +3,16 @@
 import { cn } from "@/lib/utils";
 import i from "@/public/company_info.json";
 import Image from "next/image";
-import { ShoppingCart, UserIcon } from "lucide-react";
+import {
+  Heart,
+  LogIn,
+  LogOut,
+  Mail,
+  Settings,
+  ShoppingCart,
+  UserPlus,
+  UserIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -88,12 +97,14 @@ const Navbar = ({ className }: { className?: string }) => {
                       render={<Link href="/u" />}
                       closeOnClick
                     >
+                      <UserIcon className="mr-2 inline-block size-4" aria-hidden="true" />
                       Manage Account
                     </NavigationMenuLink>
                     <NavigationMenuLink
                       render={<Link href="/u" />}
                       closeOnClick
                     >
+                      <Settings className="mr-2 inline-block size-4" aria-hidden="true" />
                       Settings
                     </NavigationMenuLink>
                     <NavigationMenuLink
@@ -107,12 +118,14 @@ const Navbar = ({ className }: { className?: string }) => {
                       closeOnClick
                       onClick={logout}
                     >
+                      <LogOut className="mr-2 inline-block size-4" aria-hidden="true" />
                       {isLoggingOut ? "Logging out..." : "Logout"}
                     </NavigationMenuLink>
                     <NavigationMenuLink
                       render={<Link href="/u" />}
                       closeOnClick
                     >
+                      <Mail className="mr-2 inline-block size-4" aria-hidden="true" />
                       Contact Us
                     </NavigationMenuLink>
                   </div>
@@ -123,6 +136,7 @@ const Navbar = ({ className }: { className?: string }) => {
                   render={<Link href="/u/wishlist" />}
                   closeOnClick
                 >
+                  <Heart className="size-4" aria-hidden="true" />
                   Wishlist
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -150,6 +164,7 @@ const Navbar = ({ className }: { className?: string }) => {
                   render={<Link href="/login" />}
                   closeOnClick
                 >
+                  <LogIn className="size-4" aria-hidden="true" />
                   Login
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -159,6 +174,7 @@ const Navbar = ({ className }: { className?: string }) => {
                   className="bg-primary text-primary-foreground hover:bg-primary/90"
                   closeOnClick
                 >
+                  <UserPlus className="size-4" aria-hidden="true" />
                   Register
                 </NavigationMenuLink>
               </NavigationMenuItem>

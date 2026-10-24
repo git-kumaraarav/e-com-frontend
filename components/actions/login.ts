@@ -3,7 +3,9 @@ import {
   getUserDetails,
   setTokensToCookies,
 } from "@/components/utils/authUtils";
+import { loadCollections } from "@/components/actions/collections";
 import type { AuthFormState } from "@/types/auth";
+import type { BackendUser } from "@/types/backend";
 
 export const loginAction = async (
   _initialState: AuthFormState,
@@ -56,10 +58,28 @@ export const loginAction = async (
     // Tokens are stored in HTTP-only cookies before loading the profile, so
     // the profile request can use the newly authenticated session.
     await setTokensToCookies(access, refresh);
-    const user = await getUserDetails();
+    let user : BackendUser = { name: "Customer", email: "customer@email.com" };
+    try{
+      user = await getUserDetails();
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+    let wishlist: NonNullable<AuthFormState["wishlist"]> = [];
+    let cartitems: NonNullable<AuthFormState["cart"]> = [];
+
+    try{
+      const collections = await loadCollections();
+      wishlist = collections.wishlist;
+      cartitems = collections.cart;
+    }catch(error){
+      console.error("Error fetching wishlist or cart items:", error);
+    }
+
     return {
       errors: {},
       user: { name: user.name ?? user.username ?? user.email, email: user.email },
+      wishlist: wishlist,
+      cart: cartitems,
     };
   } catch (error) {
     console.error("Login failed:", error);

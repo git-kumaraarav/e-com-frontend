@@ -1,3 +1,5 @@
+import { CartItem, WishlistItem } from "./backend";
+
 export type AuthFormErrors = {
   major? : string;
   name? : string; 
@@ -12,4 +14,6 @@ export type AuthFormState = {
     name: string;
     email: string;
   }
+  wishlist?: WishlistItem[];
+  cart?: CartItem[];
 }

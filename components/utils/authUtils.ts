@@ -35,17 +35,34 @@ export const setTokensToCookies = async (
 };
 
 export const refreshAccessToken = async (refreshToken: string) => {
+  if (!refreshToken) {
+    await deleteTokensFromCookie();
+    throw new UnauthorizedError("Please log in to continue.");
+  }
+
   const response = await fetch(endpoint("/api/auth/token/refresh/"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ refresh: refreshToken }),
     cache: "no-store",
   });
-  if (!response.ok) throw new UnauthorizedError("Your session has expired.");
-  const data = (await response.json()) as { access?: string; refresh?: string };
-  if (!data.access)
+  if (!response.ok) {
+    await deleteTokensFromCookie();
+    throw new UnauthorizedError("Your session has expired.");
+  }
+
+  const responseData = (await response.json()) as {
+    access?: string;
+    refresh?: string;
+    data?: { access?: string; refresh?: string };
+  };
+  const access = responseData.access ?? responseData.data?.access;
+  const refresh = responseData.refresh ?? responseData.data?.refresh;
+  if (!access) {
+    await deleteTokensFromCookie();
     throw new UnauthorizedError("The refresh token was rejected.");
-  await setTokensToCookies(data.access, data.refresh ?? refreshToken);
+  }
+  await setTokensToCookies(access, refresh ?? refreshToken);
 };
 
 export const deleteTokensFromCookie = async () => {

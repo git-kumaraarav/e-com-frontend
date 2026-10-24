@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { AuthFormState } from "@/types/auth";
 import { loginAction } from "@/components/actions/login";
 import { useStore } from "@/lib/store";
+import { LogIn } from "lucide-react";
 
 const LoginScreen = () => {
   const initalState: AuthFormState = {
@@ -17,15 +18,25 @@ const LoginScreen = () => {
     initalState,
   );
   const router = useRouter();
-  const { setUser } = useStore();
+  const { setUser, setWishlist, setCart } = useStore();
 
   // The server action returns the normalized user only after authentication
   // succeeds; synchronizing it here updates the client navigation state.
   useEffect(() => {
     if (!state.user) return;
     setUser(state.user);
+    setWishlist(state.wishlist);
+    setCart(state.cart);
     router.push("/");
-  }, [router, setUser, state.user]);
+  }, [
+    router,
+    setCart,
+    setUser,
+    setWishlist,
+    state.cart,
+    state.user,
+    state.wishlist,
+  ]);
 
   return (
     <div className="flex min-h-[60vh] items-center justify-center">
@@ -60,7 +71,10 @@ const LoginScreen = () => {
             {isPending ? (
               <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
             ) : (
-              "Login"
+              <>
+                <LogIn className="size-4" aria-hidden="true" />
+                Login
+              </>
             )}
           </Button>
         </div>

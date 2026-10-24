@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { LogIn } from "lucide-react";
 
 export default function AuthPrompt() {
   return (
@@ -12,7 +13,10 @@ export default function AuthPrompt() {
           <div className="space-y-3">
             <Input className="w-full" type="email" placeholder="Email" aria-label="Email" />
             <Input className="w-full" type="password" placeholder="Password" aria-label="Password" />
-            <Button className="w-full">Login</Button>
+            <Button className="w-full">
+              <LogIn className="size-4" aria-hidden="true" />
+              Login
+            </Button>
           </div>
           <div className="flex justify-center">
             <p className="text-sm text-muted-foreground">

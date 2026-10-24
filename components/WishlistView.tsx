@@ -7,9 +7,10 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Alert } from "@/components/ui/alert";
+import { Trash2 } from "lucide-react";
 
 export default function WishlistView() {
-  const { wishlist, toggleWishlist } = useStore();
+  const { wishlist, toggleWishlist, collectionError } = useStore();
   if (!wishlist.length)
     return (
       <Alert>
@@ -23,11 +24,17 @@ export default function WishlistView() {
       </Alert>
     );
   return (
-    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="space-y-4">
+      {collectionError && (
+        <p className="text-sm text-destructive" role="alert">
+          {collectionError}
+        </p>
+      )}
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {wishlist.map((product) => (
         <Card key={product.id} className="shadow">
           <Link
-            href={`/${product.category}/${product.id}`}
+            href={`/${product.category}/${product.slug}`}
             className="block p-5"
           >
             <Image
@@ -48,11 +55,13 @@ export default function WishlistView() {
               className="mt-2 w-full"
               onClick={() => toggleWishlist(product)}
             >
+              <Trash2 className="size-4" aria-hidden="true" />
               Remove from wishlist
             </Button>
           </div>
         </Card>
       ))}
+      </div>
     </div>
   );
 }
