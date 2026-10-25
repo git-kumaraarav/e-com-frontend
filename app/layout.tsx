@@ -42,9 +42,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         montserratHeading.variable,
       )}
     >
-      <body>
+      <body className="scrollbar scrollbar-thumb-primary">
         <StoreProvider>
-          <main className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 sm:px-6 lg:px-8">
+          <main className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 sm:px-6 lg:px-8 ">
             <Navbar />
             <div className="flex-1 py-6">{children}</div>
             <Footer />

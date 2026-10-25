@@ -6,7 +6,7 @@ import { LogIn } from "lucide-react";
 
 export default function AuthPrompt() {
   return (
-    <div className="flex min-h-[60vh] items-center justify-center">
+    <div className="flex min-h-96 items-center justify-center">
       <Card className="w-full max-w-md shadow-lg">
         <CardContent className="space-y-4 p-6">
           <CardTitle className="text-center text-2xl">Sign in to continue</CardTitle>

@@ -39,10 +39,10 @@ const LoginScreen = () => {
   ]);
 
   return (
-    <div className="flex min-h-[60vh] items-center justify-center">
+    <div className="flex min-h-96 items-center justify-center">
       <form
         action={formAction}
-        className="bg-card w-full max-w-lg p-4 radius-card space-card"
+        className="w-full max-w-lg space-y-6 rounded-lg bg-card p-4"
       >
         {state.errors.major && (
           <p className="text-red-500 text-center">{state.errors.major}</p>

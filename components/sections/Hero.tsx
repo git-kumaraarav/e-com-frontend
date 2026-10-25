@@ -35,7 +35,7 @@ const Hero = async ({
   return (
     <div className={cn("flex w-full flex-col gap-6", className)}>
       {/* carousel */}
-      <HeroCaroursel className="h-[400px] w-full" banners={banners} />
+      <HeroCaroursel className="h-96 w-full" banners={banners} />
 
       {/* Exclusive Deals Images */}
       <EventSale className="h-50 w-full" />

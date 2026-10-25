@@ -34,13 +34,13 @@ export default function CartView() {
       </Card>
     );
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_22rem]">
+    <div className="grid gap-8 lg:grid-cols-3">
       {collectionError && (
         <p className="text-sm text-destructive lg:col-span-2" role="alert">
           {collectionError}
         </p>
       )}
-      <div className="space-y-4">
+      <div className="space-y-4 lg:col-span-2">
         {cart.map((item) => (
           <Card key={item.id} className="flex flex-row p-4 shadow">
             <Image
@@ -80,7 +80,7 @@ export default function CartView() {
           </Card>
         ))}
       </div>
-      <Card className="h-fit shadow">
+      <Card className="h-fit px-1 py-10 shadow">
         <CardContent>
           <CardTitle>Order summary</CardTitle>
           <div className="flex justify-between">

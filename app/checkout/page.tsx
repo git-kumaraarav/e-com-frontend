@@ -37,8 +37,8 @@ export default function CheckoutPage() {
 
   if (!cart.length) return <Alert>Your cart is empty. <Link href="/" className="font-medium text-primary hover:underline">Continue shopping</Link></Alert>;
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_22rem]">
-      <form onSubmit={submit}><Card className="shadow"><CardContent className="space-y-4 p-6">
+    <div className="grid gap-8 lg:grid-cols-3">
+      <form className="lg:col-span-2" onSubmit={submit}><Card className="shadow"><CardContent className="space-y-4 p-6">
         <CardTitle className="text-2xl">Checkout</CardTitle>
         <label className="space-y-2"><span className="text-sm font-medium">Email</span><Input required name="email" type="email" /></label>
         <label className="space-y-2"><span className="text-sm font-medium">Shipping address</span><Textarea required name="address" rows={4} /></label>

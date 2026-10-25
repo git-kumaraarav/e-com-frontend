@@ -4,24 +4,12 @@ import { useStore } from "@/lib/store";
 import { Product } from "@/types/backend";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Check,
-  Heart,
-  Minus,
-  Plus,
-  ShoppingCart,
-  Trash2,
-} from "lucide-react";
+import { Check, Heart, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 export default function ProductActions({ product }: { product: Product }) {
-  const {
-    addToCart,
-    updateQuantity,
-    toggleWishlist,
-    isWishlisted,
-    cart,
-  } = useStore();
+  const { addToCart, updateQuantity, toggleWishlist, isWishlisted, cart } =
+    useStore();
   const [isCartPending, setIsCartPending] = useState(false);
   const [isWishlistPending, setIsWishlistPending] = useState(false);
   const [cartFeedback, setCartFeedback] = useState(false);
@@ -72,7 +60,9 @@ export default function ProductActions({ product }: { product: Product }) {
           <Button
             variant="ghost"
             size="icon"
-            aria-label={cartItem.quantity === 1 ? "Remove from cart" : "Decrease quantity"}
+            aria-label={
+              cartItem.quantity === 1 ? "Remove from cart" : "Decrease quantity"
+            }
             disabled={isCartPending}
             onClick={() => changeQuantity(cartItem.quantity - 1)}
           >
@@ -84,7 +74,10 @@ export default function ProductActions({ product }: { product: Product }) {
           </Button>
           <span className="inline-flex items-center justify-center gap-1">
             {cartFeedback && (
-              <Check className="size-4 animate-bounce text-primary" aria-hidden="true" />
+              <Check
+                className="size-4 animate-bounce text-primary"
+                aria-hidden="true"
+              />
             )}
             <Input
               className="h-8 w-14 border-0 text-center font-semibold focus-visible:ring-1"
@@ -127,7 +120,10 @@ export default function ProductActions({ product }: { product: Product }) {
         onClick={changeWishlist}
       >
         {wishlistFeedback ? (
-          <Check className="size-4 animate-bounce text-primary" aria-hidden="true" />
+          <Check
+            className="size-4 animate-bounce text-primary"
+            aria-hidden="true"
+          />
         ) : (
           <Heart
             className={`size-4 transition-transform ${

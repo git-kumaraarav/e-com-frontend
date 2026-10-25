@@ -27,7 +27,7 @@ const EventSale = async ({
         <Image
           src={banner[0].imageUrl}
           alt="Exclusive Deal 1"
-          className="aspect-[3/1] w-full object-cover"
+          className="aspect-video w-full object-cover"
           height={200}
           width={600}
         />

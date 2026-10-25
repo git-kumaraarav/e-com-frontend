@@ -74,7 +74,7 @@ return (
                   <Image
                     src={item.imageUrl}
                     alt={item.altText}
-                    className="aspect-[2/1] w-full object-cover"
+                    className="aspect-video w-full object-cover"
                     height={400}
                     width={800}
                     loading={index === 0 ? "eager" : "lazy"}

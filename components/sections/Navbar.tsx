@@ -4,7 +4,6 @@ import { cn } from "@/lib/utils";
 import i from "@/public/company_info.json";
 import Image from "next/image";
 import {
-  Heart,
   LogIn,
   LogOut,
   Mail,
@@ -12,6 +11,8 @@ import {
   ShoppingCart,
   UserPlus,
   UserIcon,
+  PackageOpen,
+  Heart,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -88,7 +89,7 @@ const Navbar = ({ className }: { className?: string }) => {
             <NavigationMenuList className="flex items-center gap-1">
               <NavigationMenuItem>
                 <NavigationMenuTrigger>
-                  <UserIcon className="size-4" />
+                  <UserIcon className="size-4 mr-2 inline-block" />
                   Account
                 </NavigationMenuTrigger>
                 <NavigationMenuContent className="w-48 bg-card text-foreground ">
@@ -106,6 +107,14 @@ const Navbar = ({ className }: { className?: string }) => {
                     >
                       <Settings className="mr-2 inline-block size-4" aria-hidden="true" />
                       Settings
+                    </NavigationMenuLink>
+
+                    <NavigationMenuLink
+                      render={<Link href="/u/wishlist" />}
+                      closeOnClick
+                    >
+                      <Heart className="mr-2 inline-block size-4" aria-hidden="true" />
+                      Wishlist
                     </NavigationMenuLink>
                     <NavigationMenuLink
                       render={
@@ -133,11 +142,11 @@ const Navbar = ({ className }: { className?: string }) => {
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <NavigationMenuLink
-                  render={<Link href="/u/wishlist" />}
+                  render={<Link href="/u/orders-and-returns" />}
                   closeOnClick
                 >
-                  <Heart className="size-4" aria-hidden="true" />
-                  Wishlist
+                  <PackageOpen className="size-4" aria-hidden="true" />
+                  Orders & Returns
                 </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
