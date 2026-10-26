@@ -1,8 +1,8 @@
 import "server-only";
 
-import { cookies } from "next/headers";
+import { getServerSession } from "next-auth";
 import { UnauthorizedError } from "@/lib/errors";
-import { refreshAccessToken } from "@/components/utils/authUtils";
+import { authOptions } from "@/lib/auth";
 
 const backendUrl =
   process.env.BACKEND_ROOT_URL ?? process.env.NEXT_PUBLIC_API_URL;
@@ -16,7 +16,6 @@ function resolveUrl(path: string) {
 export default async function apiFetch<T>(
   path: string,
   options: RequestInit = {},
-  hasRetried = false,
 ): Promise<T> {
   const publicRequest =
     (options.method ?? "GET") === "GET" &&
@@ -26,8 +25,10 @@ export default async function apiFetch<T>(
       path.startsWith("/api/products/") ||
       path.startsWith("/api/banners/") ||
       path.startsWith("/api/event-banners/"));
-  const cookieStore = publicRequest ? null : await cookies();
-  const accessToken = cookieStore?.get("accessToken")?.value;
+  const session = publicRequest
+    ? null
+    : await getServerSession(authOptions);
+  const accessToken = session?.accessToken;
   const headers = new Headers(options.headers);
   headers.set("Accept", "application/json");
   if (
@@ -45,12 +46,8 @@ export default async function apiFetch<T>(
     cache: options.cache ?? "no-store",
   });
 
-  if (response.status === 401 && !hasRetried) {
-    const refreshToken = cookieStore?.get("refreshToken")?.value;
-    if (!refreshToken)
-      throw new UnauthorizedError("Please log in to continue.");
-    await refreshAccessToken(refreshToken);
-    return apiFetch<T>(path, options, true);
+  if (response.status === 401) {
+    throw new UnauthorizedError("Please log in to continue.");
   }
 
   if (!response.ok) {

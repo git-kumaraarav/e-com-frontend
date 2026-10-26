@@ -20,7 +20,7 @@ import { useState, useTransition } from "react";
 import SearchBox from "@/components/SearchBox";
 import { useStore } from "@/lib/store";
 import ThemeChanger from "@/components/ThemeChanger";
-import { logoutAction } from "@/components/actions/logout";
+import { signOut } from "next-auth/react";
 
 import {
   NavigationMenu,
@@ -40,7 +40,7 @@ const Navbar = ({ className }: { className?: string }) => {
     setLogoutError(null);
     startLogout(async () => {
       try {
-        await logoutAction();
+        await signOut({ redirect: false });
         clearUserData();
         router.push("/");
         router.refresh();

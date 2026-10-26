@@ -19,7 +19,7 @@ export default function SearchBox() {
     router.push(value ? `/search?q=${encodeURIComponent(value)}` : "/");
   }
   return (
-      <div className="flex w-full items-center gap-2 rounded-md px-3 py-2 relative">
+      <div className="flex w-full items-center gap-2 rounded-md relative">
         <form onSubmit={submit} className="w-full relative">
             <ButtonGroup className="w-full gap-1">
               <Input id="input-button-group" placeholder="Type to search..." onChange={(e) => setQuery(e.target.value)}/>

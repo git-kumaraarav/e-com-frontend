@@ -1,9 +1,12 @@
-import { getUserDetails } from "@/components/utils/authUtils";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export const instant = false;
 
 export default async function Me() {
-  const userData = await getUserDetails();
+  const session = await getServerSession(authOptions);
+  if (!session?.user) return null;
+  const userData = session.user;
 
   return (
     <div className="flex min-h-96 items-center justify-center">

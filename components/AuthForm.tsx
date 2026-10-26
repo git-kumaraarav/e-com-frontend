@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { UserPlus } from "lucide-react";
+import GoogleSignInButton from "@/components/GoogleSignInButton";
 
 const initialState: AuthFormState = { errors: {} };
 
@@ -26,6 +27,12 @@ export default function AuthForm() {
       <form action={formAction}>
         <CardContent className="space-y-4 p-6">
           <CardTitle className="text-center text-2xl">Create an account</CardTitle>
+          <GoogleSignInButton />
+          <div className="flex items-center gap-3 py-1 text-sm text-muted-foreground">
+            <span className="h-px flex-1 bg-border" />
+            <span>or</span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
           <Input required name="name" placeholder="Full name" />
           <Input required name="email" type="email" placeholder="Email" />
           <Input required name="password" type="password" minLength={8} placeholder="Password" />

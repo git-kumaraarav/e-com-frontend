@@ -12,7 +12,6 @@ import {
   updateCartItem,
 } from "@/lib/api";
 import { normalizeProduct } from "@/lib/api";
-import { deleteTokensFromCookie } from "@/components/utils/authUtils";
 import { UnauthorizedError } from "@/lib/errors";
 import type { CartItem, Product, WishlistItem } from "@/types/backend";
 
@@ -73,7 +72,6 @@ export async function loadCollections(): Promise<{
     };
   } catch (error) {
     if (error instanceof UnauthorizedError) {
-      await deleteTokensFromCookie();
       return { cart: [], wishlist: [], authenticated: false };
     }
     throw error;

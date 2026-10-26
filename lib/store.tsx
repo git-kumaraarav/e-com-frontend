@@ -1,6 +1,9 @@
 "use client";
-import { Product } from "@/types/backend";
-import type { CartItem as BackendCartItem, WishlistItem as BackendWishlistItem } from "@/types/backend";
+import type {
+  CartItem as BackendCartItem,
+  Product,
+  WishlistItem as BackendWishlistItem,
+} from "@/types/backend";
 import {
   createRemoteCartItem,
   createRemoteWishlistItem,
@@ -18,12 +21,14 @@ import React, {
   useState,
 } from "react";
 
-type CartItem = Product & { quantity: number; backendId?: number };
-type WishlistItem = Product & { backendId?: number };
 type User = { name?: string; email: string };
+type ProductWithBackendId = Product & { backendId?: number };
+type CartState = ProductWithBackendId & { quantity: number };
+type WishlistState = ProductWithBackendId;
+
 type StoreContextValue = {
-  cart: CartItem[];
-  wishlist: WishlistItem[];
+  cart: CartState[];
+  wishlist: WishlistState[];
   user: User | null;
   cartCount: number;
   cartTotal: number;
@@ -41,6 +46,21 @@ type StoreContextValue = {
 
 const StoreContext = createContext<StoreContextValue | null>(null);
 
+const STORAGE_KEYS = {
+  cart: "user-cart",
+  wishlist: "user-wishlist",
+  user: "user",
+} as const;
+
+const FALLBACK_PRODUCT: Product = {
+  id: 0,
+  title: "Product",
+  price: 0,
+  description: "",
+  category: "products",
+  image: "/images/hero1.jpg",
+};
+
 function readStorage<T>(key: string, fallback: T): T {
   try {
     const value = localStorage.getItem(key);
@@ -50,9 +70,30 @@ function readStorage<T>(key: string, fallback: T): T {
   }
 }
 
+function productFromBackend(product: number | Product): Product {
+  return typeof product === "number"
+    ? { ...FALLBACK_PRODUCT, id: product }
+    : product;
+}
+
+function mapCartItem(item: BackendCartItem): CartState {
+  return {
+    ...productFromBackend(item.product),
+    quantity: item.quantity,
+    backendId: item.id,
+  };
+}
+
+function mapWishlistItem(item: BackendWishlistItem): WishlistState {
+  return {
+    ...productFromBackend(item.product),
+    backendId: item.id,
+  };
+}
+
 export function StoreProvider({ children }: { children: React.ReactNode }) {
-  const [cart, setCartItems] = useState<CartItem[]>([]);
-  const [wishlist, setWishlistItems] = useState<WishlistItem[]>([]);
+  const [cart, setCartItems] = useState<CartState[]>([]);
+  const [wishlist, setWishlistItems] = useState<WishlistState[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [hydrated, setHydrated] = useState(false);
   const [collectionError, setCollectionError] = useState<string | null>(null);
@@ -60,9 +101,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Storage is only available after mount, so hydrate the deterministic server state here.
     /* eslint-disable react-hooks/set-state-in-effect */
-    setCartItems(readStorage("user-cart", []));
-    setWishlistItems(readStorage("user-wishlist", []));
-    setUser(readStorage("user", null));
+    setCartItems(readStorage(STORAGE_KEYS.cart, []));
+    setWishlistItems(readStorage(STORAGE_KEYS.wishlist, []));
+    setUser(readStorage(STORAGE_KEYS.user, null));
     setHydrated(true);
     /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
@@ -78,19 +119,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           setCollectionError("Your session expired. Please log in again.");
           return;
         }
-        setCartItems(
-          remoteCart.map((item) => ({
-            ...item.product,
-            quantity: item.quantity,
-            backendId: item.id,
-          })),
-        );
-        setWishlistItems(
-          remoteWishlist.map((item) => ({
-            ...item.product,
-            backendId: item.id,
-          })),
-        );
+        setCartItems(remoteCart.map(mapCartItem));
+        setWishlistItems(remoteWishlist.map(mapWishlistItem));
         setCollectionError(null);
       })
       .catch((error) => {
@@ -101,44 +131,19 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const setCart = useCallback((items: BackendCartItem[] = []) => {
     setCartItems(
-      items.map((item) => ({
-        ...(typeof item.product === "number"
-          ? {
-              id: item.product,
-              title: "Product",
-              price: 0,
-              description: "",
-              category: "products",
-              image: "/images/hero1.jpg",
-            }
-          : item.product),
-        quantity: item.quantity,
-        backendId: item.id,
-      })),
+      items.map(mapCartItem),
     );
   }, []);
 
   const setWishlist = useCallback((items: BackendWishlistItem[] = []) => {
     setWishlistItems(
-      items.map((item) => ({
-        ...(typeof item.product === "number"
-          ? {
-              id: item.product,
-              title: "Product",
-              price: 0,
-              description: "",
-              category: "products",
-              image: "/images/hero1.jpg",
-            }
-          : item.product),
-        backendId: item.id,
-      })),
+      items.map(mapWishlistItem),
     );
   }, []);
 
   useEffect(
     () => {
-      if (hydrated) localStorage.setItem("user-cart", JSON.stringify(cart));
+      if (hydrated) localStorage.setItem(STORAGE_KEYS.cart, JSON.stringify(cart));
     },
     [cart, hydrated],
   );
@@ -146,16 +151,24 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   useEffect(
     () => {
       if (hydrated)
-        localStorage.setItem("user-wishlist", JSON.stringify(wishlist));
+        localStorage.setItem(STORAGE_KEYS.wishlist, JSON.stringify(wishlist));
     },
     [hydrated, wishlist],
   );
 
   useEffect(() => {
     if (!hydrated) return;
-    if (user) localStorage.setItem("user", JSON.stringify(user));
-    else localStorage.removeItem("user");
+    if (user) localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(user));
+    else localStorage.removeItem(STORAGE_KEYS.user);
   }, [hydrated, user]);
+
+  const reportCollectionError = useCallback(
+    (message: string, userMessage: string, error: unknown) => {
+    console.error(message, error);
+      setCollectionError(userMessage);
+    },
+    [],
+  );
 
   const value = useMemo<StoreContextValue>(
     () => ({
@@ -187,8 +200,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             setCollectionError(null);
             return;
           } catch (error) {
-            console.error("Unable to add item to cart:", error);
-            setCollectionError("Unable to update your cart.");
+            reportCollectionError(
+              "Unable to add item to cart:",
+              "Unable to update your cart.",
+              error,
+            );
             return;
           }
         }
@@ -210,8 +226,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             else await deleteRemoteCartItem(item.backendId);
             setCollectionError(null);
           } catch (error) {
-            console.error("Unable to update cart item:", error);
-            setCollectionError("Unable to update your cart.");
+            reportCollectionError(
+              "Unable to update cart item:",
+              "Unable to update your cart.",
+              error,
+            );
             return;
           }
         }
@@ -230,8 +249,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             await deleteRemoteCartItem(item.backendId);
             setCollectionError(null);
           } catch (error) {
-            console.error("Unable to remove cart item:", error);
-            setCollectionError("Unable to update your cart.");
+            reportCollectionError(
+              "Unable to remove cart item:",
+              "Unable to update your cart.",
+              error,
+            );
             return;
           }
         }
@@ -253,8 +275,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             }
             setCollectionError(null);
           } catch (error) {
-            console.error("Unable to update wishlist:", error);
-            setCollectionError("Unable to update your wishlist.");
+            reportCollectionError(
+              "Unable to update wishlist:",
+              "Unable to update your wishlist.",
+              error,
+            );
             return;
           }
         }
@@ -276,7 +301,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       },
       collectionError,
     }),
-    [cart, collectionError, setCart, setWishlist, user, wishlist],
+    [cart, collectionError, reportCollectionError, setCart, setWishlist, user, wishlist],
   );
 
   return (

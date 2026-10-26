@@ -22,7 +22,7 @@ export const ProductListing = async ({
               className="text-blue-500 hover:underline"
             >
               <h2 className="text-lg font-semibold">{product.title || product.name}</h2>
-              <p className="text-gray-600"><span className="size-4">₹</span>{Number(product.price).toFixed(2)}</p>
+              <p className="text-gray-600"><span className="font-bold text-lg px-2">₹</span>{Number(product.price).toFixed(2)}</p>
             </Link>
           </div>
         </div>

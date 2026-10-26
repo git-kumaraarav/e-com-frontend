@@ -40,9 +40,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         "font-sans",
         inter.variable,
         montserratHeading.variable,
+        "scrollbar-none scrollbar-track-background scrollbar-thumb-primary md:scrollbar-thin "
       )}
     >
-      <body className="scrollbar scrollbar-thumb-primary">
+      <body className="">
         <StoreProvider>
           <main className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 sm:px-6 lg:px-8 ">
             <Navbar />

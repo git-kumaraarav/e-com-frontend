@@ -1,55 +1,72 @@
 "use client";
+
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { FormEvent, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useActionState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { AuthFormState } from "@/types/auth";
-import { loginAction } from "@/components/actions/login";
+import GoogleSignInButton from "@/components/GoogleSignInButton";
+import { getAuthenticatedState } from "@/components/actions/authenticatedState";
 import { useStore } from "@/lib/store";
 import { LogIn } from "lucide-react";
 
-const LoginScreen = () => {
-  const initalState: AuthFormState = {
-    errors: {},
-  };
-
-  const [state, formAction, isPending] = useActionState(
-    loginAction,
-    initalState,
-  );
+export default function LoginScreen() {
   const router = useRouter();
   const { setUser, setWishlist, setCart } = useStore();
+  const [error, setError] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
 
-  // The server action returns the normalized user only after authentication
-  // succeeds; synchronizing it here updates the client navigation state.
-  useEffect(() => {
-    if (!state.user) return;
-    setUser(state.user);
-    setWishlist(state.wishlist);
-    setCart(state.cart);
-    router.push("/");
-  }, [
-    router,
-    setCart,
-    setUser,
-    setWishlist,
-    state.cart,
-    state.user,
-    state.wishlist,
-  ]);
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError(null);
+    setPending(true);
+
+    const formData = new FormData(event.currentTarget);
+    try {
+      const result = await signIn("credentials", {
+        email: String(formData.get("email") ?? ""),
+        password: String(formData.get("password") ?? ""),
+        redirect: false,
+      });
+      if (result?.error) {
+        setError("Invalid email or password.");
+        return;
+      }
+
+      const state = await getAuthenticatedState();
+      if (state.error || !state.user) {
+        setError(state.error ?? "Unable to load your account.");
+        return;
+      }
+
+      setUser(state.user);
+      setWishlist(state.wishlist);
+      setCart(state.cart);
+      router.push("/");
+      router.refresh();
+    } catch (error) {
+      console.error("Login failed:", error);
+      setError("Unable to sign in. Please try again.");
+    } finally {
+      setPending(false);
+    }
+  }
 
   return (
     <div className="flex min-h-96 items-center justify-center">
       <form
-        action={formAction}
+        onSubmit={handleSubmit}
         className="w-full max-w-lg space-y-6 rounded-lg bg-card p-4"
       >
-        {state.errors.major && (
-          <p className="text-red-500 text-center">{state.errors.major}</p>
-        )}
-        <div className="justify-center flex flex-col gap-2">
+        {error && <p className="text-center text-red-500">{error}</p>}
+        <div className="flex flex-col justify-center gap-2">
+          <GoogleSignInButton />
+          <div className="flex items-center gap-3 py-1 text-sm text-muted-foreground">
+            <span className="h-px flex-1 bg-border" />
+            <span>or</span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
           <label htmlFor="email">Email</label>
-          {state.errors.email && <p>{state.errors.email}</p>}
           <Input
             id="email"
             name="email"
@@ -57,18 +74,20 @@ const LoginScreen = () => {
             autoComplete="email"
             placeholder="alice@example.com"
             className="bg-secondary"
+            required
           />
-
           <label htmlFor="password">Password</label>
           <Input
             id="password"
             name="password"
             type="password"
+            autoComplete="current-password"
             placeholder="••••••••"
             className="bg-secondary"
+            required
           />
-          <Button type="submit" disabled={isPending} className="w-full">
-            {isPending ? (
+          <Button type="submit" disabled={pending} className="w-full">
+            {pending ? (
               <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
             ) : (
               <>
@@ -81,6 +100,4 @@ const LoginScreen = () => {
       </form>
     </div>
   );
-};
-
-export default LoginScreen;
+}
