@@ -1,15 +1,12 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { getAuthenticatedState } from "@/components/actions/authenticatedState";
-import { useStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 
 export default function GoogleSignInButton() {
-  const router = useRouter();
-  const { setUser, setWishlist, setCart } = useStore();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -18,26 +15,7 @@ export default function GoogleSignInButton() {
     setPending(true);
 
     try {
-      const result = await signIn("google", {
-        callbackUrl: "/",
-        redirect: false,
-      });
-      if (result?.error) {
-        setError("Unable to sign in with Google.");
-        return;
-      }
-
-      const state = await getAuthenticatedState();
-      if (state.error || !state.user) {
-        setError(state.error ?? "Unable to load your Google account.");
-        return;
-      }
-
-      setUser(state.user);
-      setWishlist(state.wishlist);
-      setCart(state.cart);
-      router.push(result?.url ?? "/");
-      router.refresh();
+      await signIn("google", { callbackUrl: "/" });
     } catch (error) {
       console.error("Google sign-in failed:", error);
       setError("Unable to sign in with Google.");
@@ -55,6 +33,7 @@ export default function GoogleSignInButton() {
         disabled={pending}
         onClick={handleSignIn}
       >
+        <FontAwesomeIcon icon={faGoogle} className="size-4" aria-hidden="true" />
         {pending ? "Connecting to Google..." : "Continue with Google"}
       </Button>
       {error && (

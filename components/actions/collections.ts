@@ -23,6 +23,8 @@ export type ClientWishlistItem = Omit<WishlistItem, "product"> & {
 async function resolveProduct(
   product: number | Product,
   products: Map<number, Product>,
+  pendingProducts: Map<number, Promise<Product>>,
+  productListPromise: Promise<Product[]>,
 ) {
   if (typeof product !== "number") {
     const normalized = normalizeProduct(product);
@@ -33,14 +35,29 @@ async function resolveProduct(
   const cached = products.get(product);
   if (cached) return cached;
 
-  const productList = await listProducts();
-  const productSummary = productList.find((entry) => entry.id === product);
-  if (!productSummary?.slug) {
-    throw new Error(`Product ${product} does not have a slug.`);
-  }
-  const resolved = normalizeProduct(await getProduct(productSummary.slug));
-  products.set(resolved.id, resolved);
-  return resolved;
+  const pending = pendingProducts.get(product);
+  if (pending) return pending;
+
+  const request = productListPromise
+    .then((productList) => {
+      const productSummary = productList.find((entry) => entry.id === product);
+      if (!productSummary?.slug) {
+        throw new Error(`Product ${product} does not have a slug.`);
+      }
+      return getProduct(productSummary.slug).then(normalizeProduct);
+    })
+    .then((resolved) => {
+      products.set(resolved.id, resolved);
+      pendingProducts.delete(product);
+      return resolved;
+    })
+    .catch((error) => {
+      pendingProducts.delete(product);
+      throw error;
+    });
+
+  pendingProducts.set(product, request);
+  return request;
 }
 
 export async function loadCollections(): Promise<{
@@ -54,18 +71,35 @@ export async function loadCollections(): Promise<{
       listWishlistItems(),
     ]);
     const products = new Map<number, Product>();
+    const pendingProducts = new Map<number, Promise<Product>>();
+    const hasNumericProduct = [...cartItems, ...wishlistItems].some(
+      (item) => typeof item.product === "number",
+    );
+    const productListPromise = hasNumericProduct
+      ? listProducts().then((items) => items.map(normalizeProduct))
+      : Promise.resolve([]);
 
     return {
       cart: await Promise.all(
         cartItems.map(async (item) => ({
           ...item,
-          product: await resolveProduct(item.product, products),
+          product: await resolveProduct(
+            item.product,
+            products,
+            pendingProducts,
+            productListPromise,
+          ),
         })),
       ),
       wishlist: await Promise.all(
         wishlistItems.map(async (item) => ({
           ...item,
-          product: await resolveProduct(item.product, products),
+          product: await resolveProduct(
+            item.product,
+            products,
+            pendingProducts,
+            productListPromise,
+          ),
         })),
       ),
       authenticated: true,

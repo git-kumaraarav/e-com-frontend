@@ -1,27 +1,10 @@
 import Link from "next/link";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { listProducts, normalizeProduct } from "@/lib/api";
 import { Product } from "@/types/backend";
-import {ProductListing} from "@/components/ProductListing";
+import { ProductListing } from "@/components/ProductListing";
 
-
-export default async function FeaturedProducts() {
-  let products: Product[];
-
-  try {
-    products = (await listProducts()).map(normalizeProduct);
-  } catch (error) {
-    console.error("Error fetching featured products:", error);
-    return (
-      <section className="w-full">
-        <Alert variant="destructive">
-          Featured products are temporarily unavailable. Please try again later.
-        </Alert>
-      </section>
-    );
-  }
-
+export default function FeaturedProducts({ products }: { products: Product[] }) {
   return (
     <section className="w-full space-y-5">
       <div className="flex items-end justify-between gap-4">
@@ -41,7 +24,13 @@ export default async function FeaturedProducts() {
           View all
         </Link>
       </div>
-      <ProductListing products={products.slice(0, 4)} />
+      {products.length > 0 ? (
+        <ProductListing products={products.slice(0, 4)} />
+      ) : (
+        <Alert variant="destructive">
+          Featured products are temporarily unavailable. Please try again later.
+        </Alert>
+      )}
     </section>
   );
 }

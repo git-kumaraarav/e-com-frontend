@@ -12,12 +12,14 @@ import {
   loadCollections,
   updateRemoteCartItem,
 } from "@/components/actions/collections";
+import { getAuthenticatedState } from "@/components/actions/authenticatedState";
 import React, {
   createContext,
   useContext,
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -40,6 +42,7 @@ type StoreContextValue = {
   setUser: (user: User | null) => void;
   setCart: (items?: BackendCartItem[]) => void;
   setWishlist: (items?: BackendWishlistItem[]) => void;
+  syncAuthenticatedState: () => Promise<void>;
   clearUserData: () => void;
   collectionError: string | null;
 };
@@ -97,6 +100,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [hydrated, setHydrated] = useState(false);
   const [collectionError, setCollectionError] = useState<string | null>(null);
+  const lastSyncedUserRef = useRef<string | null | undefined>(undefined);
+  const authSyncPromiseRef = useRef<Promise<void> | null>(null);
 
   useEffect(() => {
     // Storage is only available after mount, so hydrate the deterministic server state here.
@@ -108,53 +113,85 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
+  const setCart = useCallback((items: BackendCartItem[] = []) => {
+    setCartItems(items.map(mapCartItem));
+  }, []);
+
+  const setWishlist = useCallback((items: BackendWishlistItem[] = []) => {
+    setWishlistItems(items.map(mapWishlistItem));
+  }, []);
+
+  const syncAuthenticatedState = useCallback(async () => {
+    if (authSyncPromiseRef.current) return authSyncPromiseRef.current;
+
+    const sync = getAuthenticatedState()
+      .then((state) => {
+        if (state.error || !state.user) return;
+        lastSyncedUserRef.current = state.user.email;
+        setUser(state.user);
+        setCartItems(state.cart.map(mapCartItem));
+        setWishlistItems(state.wishlist.map(mapWishlistItem));
+      })
+      .finally(() => {
+        authSyncPromiseRef.current = null;
+      });
+
+    authSyncPromiseRef.current = sync;
+    return sync;
+  }, []);
+
   useEffect(() => {
-    if (!hydrated || !user) return;
+    if (!hydrated) return;
+
+    const userKey = user?.email ?? null;
+    if (lastSyncedUserRef.current === userKey) return;
+
+    if (!user) {
+      lastSyncedUserRef.current = userKey;
+      syncAuthenticatedState().catch((error) => {
+        lastSyncedUserRef.current = undefined;
+        console.error("Unable to hydrate the authenticated store:", error);
+      });
+      return;
+    }
+
+    let cancelled = false;
     loadCollections()
       .then(({ cart: remoteCart, wishlist: remoteWishlist, authenticated }) => {
+        if (cancelled) return;
         if (!authenticated) {
           setCartItems([]);
           setWishlistItems([]);
           setUser(null);
+          lastSyncedUserRef.current = null;
           setCollectionError("Your session expired. Please log in again.");
           return;
         }
+        lastSyncedUserRef.current = userKey;
         setCartItems(remoteCart.map(mapCartItem));
         setWishlistItems(remoteWishlist.map(mapWishlistItem));
         setCollectionError(null);
       })
       .catch((error) => {
+        if (cancelled) return;
+        lastSyncedUserRef.current = undefined;
         console.error("Unable to synchronize cart and wishlist:", error);
         setCollectionError("Unable to synchronize your cart and wishlist.");
       });
-  }, [hydrated, user]);
 
-  const setCart = useCallback((items: BackendCartItem[] = []) => {
-    setCartItems(
-      items.map(mapCartItem),
-    );
-  }, []);
+    return () => {
+      cancelled = true;
+    };
+  }, [hydrated, syncAuthenticatedState, user]);
 
-  const setWishlist = useCallback((items: BackendWishlistItem[] = []) => {
-    setWishlistItems(
-      items.map(mapWishlistItem),
-    );
-  }, []);
+  useEffect(() => {
+    if (hydrated) localStorage.setItem(STORAGE_KEYS.cart, JSON.stringify(cart));
+  }, [cart, hydrated]);
 
-  useEffect(
-    () => {
-      if (hydrated) localStorage.setItem(STORAGE_KEYS.cart, JSON.stringify(cart));
-    },
-    [cart, hydrated],
-  );
-
-  useEffect(
-    () => {
-      if (hydrated)
-        localStorage.setItem(STORAGE_KEYS.wishlist, JSON.stringify(wishlist));
-    },
-    [hydrated, wishlist],
-  );
+  useEffect(() => {
+    if (hydrated)
+      localStorage.setItem(STORAGE_KEYS.wishlist, JSON.stringify(wishlist));
+  }, [hydrated, wishlist]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -164,7 +201,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const reportCollectionError = useCallback(
     (message: string, userMessage: string, error: unknown) => {
-    console.error(message, error);
+      console.error(message, error);
       setCollectionError(userMessage);
     },
     [],
@@ -222,7 +259,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         const item = cart.find((entry) => entry.id === id);
         if (user && item?.backendId) {
           try {
-            if (quantity > 0) await updateRemoteCartItem(item.backendId, quantity);
+            if (quantity > 0)
+              await updateRemoteCartItem(item.backendId, quantity);
             else await deleteRemoteCartItem(item.backendId);
             setCollectionError(null);
           } catch (error) {
@@ -263,7 +301,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         const existing = wishlist.find((item) => item.id === product.id);
         if (user) {
           try {
-            if (existing?.backendId) await deleteRemoteWishlistItem(existing.backendId);
+            if (existing?.backendId)
+              await deleteRemoteWishlistItem(existing.backendId);
             else {
               const remote = await createRemoteWishlistItem(product.id);
               setWishlistItems((items) => [
@@ -293,6 +332,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       setUser,
       setCart,
       setWishlist,
+      syncAuthenticatedState,
       clearUserData: () => {
         setCartItems([]);
         setWishlistItems([]);
@@ -301,7 +341,16 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       },
       collectionError,
     }),
-    [cart, collectionError, reportCollectionError, setCart, setWishlist, user, wishlist],
+    [
+      cart,
+      collectionError,
+      reportCollectionError,
+      setCart,
+      setWishlist,
+      syncAuthenticatedState,
+      user,
+      wishlist,
+    ],
   );
 
   return (

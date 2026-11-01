@@ -4,16 +4,17 @@ import { cn } from "@/lib/utils";
 import i from "@/public/company_info.json";
 import Image from "next/image";
 import {
-  LogIn,
-  LogOut,
-  Mail,
-  Settings,
-  ShoppingCart,
-  UserPlus,
-  UserIcon,
-  PackageOpen,
-  Heart,
-} from "lucide-react";
+  faHeart,
+  faRightFromBracket,
+  faRightToBracket,
+  faGear,
+  faEnvelope,
+  faCartShopping,
+  faUser,
+  faUserPlus,
+  faBoxOpen,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -43,7 +44,6 @@ const Navbar = ({ className }: { className?: string }) => {
         await signOut({ redirect: false });
         clearUserData();
         router.push("/");
-        router.refresh();
       } catch (error) {
         console.error("Logout failed:", error);
         setLogoutError("Unable to log out. Please try again.");
@@ -89,8 +89,8 @@ const Navbar = ({ className }: { className?: string }) => {
             <NavigationMenuList className="flex items-center gap-1">
               <NavigationMenuItem>
                 <NavigationMenuTrigger>
-                  <UserIcon className="size-4 mr-2 inline-block" />
-                  Account
+                  <FontAwesomeIcon icon={faUser} className="mr-2 inline-block size-4" />
+                  {user.name?.split(" ")[0] ?? user.email?.split("@")[0] ?? "Account"}
                 </NavigationMenuTrigger>
                 <NavigationMenuContent className="w-48 bg-card text-foreground ">
                   <div className="grid gap-1">
@@ -98,14 +98,14 @@ const Navbar = ({ className }: { className?: string }) => {
                       render={<Link href="/u" />}
                       closeOnClick
                     >
-                      <UserIcon className="mr-2 inline-block size-4" aria-hidden="true" />
+                      <FontAwesomeIcon icon={faUser} className="mr-2 inline-block size-4" aria-hidden="true" />
                       Manage Account
                     </NavigationMenuLink>
                     <NavigationMenuLink
                       render={<Link href="/u" />}
                       closeOnClick
                     >
-                      <Settings className="mr-2 inline-block size-4" aria-hidden="true" />
+                      <FontAwesomeIcon icon={faGear} className="mr-2 inline-block size-4" aria-hidden="true" />
                       Settings
                     </NavigationMenuLink>
 
@@ -113,7 +113,7 @@ const Navbar = ({ className }: { className?: string }) => {
                       render={<Link href="/u/wishlist" />}
                       closeOnClick
                     >
-                      <Heart className="mr-2 inline-block size-4" aria-hidden="true" />
+                      <FontAwesomeIcon icon={faHeart} className="mr-2 inline-block size-4" aria-hidden="true" />
                       Wishlist
                     </NavigationMenuLink>
                     <NavigationMenuLink
@@ -127,14 +127,14 @@ const Navbar = ({ className }: { className?: string }) => {
                       closeOnClick
                       onClick={logout}
                     >
-                      <LogOut className="mr-2 inline-block size-4" aria-hidden="true" />
+                      <FontAwesomeIcon icon={faRightFromBracket} className="mr-2 inline-block size-4" aria-hidden="true" />
                       {isLoggingOut ? "Logging out..." : "Logout"}
                     </NavigationMenuLink>
                     <NavigationMenuLink
                       render={<Link href="/u" />}
                       closeOnClick
                     >
-                      <Mail className="mr-2 inline-block size-4" aria-hidden="true" />
+                      <FontAwesomeIcon icon={faEnvelope} className="mr-2 inline-block size-4" aria-hidden="true" />
                       Contact Us
                     </NavigationMenuLink>
                   </div>
@@ -145,7 +145,7 @@ const Navbar = ({ className }: { className?: string }) => {
                   render={<Link href="/u/orders-and-returns" />}
                   closeOnClick
                 >
-                  <PackageOpen className="size-4" aria-hidden="true" />
+                  <FontAwesomeIcon icon={faBoxOpen} className="size-4" aria-hidden="true" />
                   Orders & Returns
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -154,7 +154,7 @@ const Navbar = ({ className }: { className?: string }) => {
                   render={<Link href="/u/cart" />}
                   closeOnClick
                 >
-                  <ShoppingCart className="size-4" />
+                  <FontAwesomeIcon icon={faCartShopping} className="size-4" />
                   Cart
                   {cartCount > 0 && (
                     <span className="rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
@@ -173,7 +173,7 @@ const Navbar = ({ className }: { className?: string }) => {
                   render={<Link href="/login" />}
                   closeOnClick
                 >
-                  <LogIn className="size-4" aria-hidden="true" />
+                  <FontAwesomeIcon icon={faRightToBracket} className="size-4" aria-hidden="true" />
                   Login
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -183,7 +183,7 @@ const Navbar = ({ className }: { className?: string }) => {
                   className="bg-primary text-primary-foreground hover:bg-primary/90"
                   closeOnClick
                 >
-                  <UserPlus className="size-4" aria-hidden="true" />
+                  <FontAwesomeIcon icon={faUserPlus} className="size-4" aria-hidden="true" />
                   Register
                 </NavigationMenuLink>
               </NavigationMenuItem>

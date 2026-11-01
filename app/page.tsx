@@ -1,22 +1,27 @@
 import Hero from "@/components/sections/Hero";
 import FeaturedProducts from "@/components/sections/FeaturedProducts";
-import { listBanners } from "@/lib/api";
-import type { Banner } from "@/types/backend";
+import ProductHighlights from "@/components/sections/ProductHighlights";
+import CustomOrders from "@/components/sections/CustomOrders";
+import { listProducts, normalizeProduct } from "@/lib/api";
+import type { Product } from "@/types/backend";
 
 export const instant = false;
 
 export default async function Home() {
-  let banners: Banner[] = [];
+  let products: Product[] = [];
+
   try {
-    banners = await listBanners();
+    products = (await listProducts()).map(normalizeProduct);
   } catch (error) {
-    console.error("Unable to load sale banners:", error);
+    console.error("Unable to load homepage products:", error);
   }
+
   return (
-    <div className="space-y-10">
-      <Hero banners={banners} />
-      {/* <Deals /> */}
-      <FeaturedProducts />
+    <div className="space-y-12">
+      <Hero />
+      <FeaturedProducts products={products} />
+      <ProductHighlights products={products} />
+      <CustomOrders />
     </div>
   );
 }

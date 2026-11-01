@@ -13,6 +13,7 @@ export type Product = {
     rate: number;
     count: number;
   };
+  attributes?: any; 
 };
 
 export type BackendUser = {

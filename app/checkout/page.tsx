@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Input, Textarea } from "@/components/ui/input";
 import { createOrderAction } from "@/components/actions/orders";
-import { CreditCard } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCreditCard } from "@fortawesome/free-solid-svg-icons";
 
 export default function CheckoutPage() {
   const { cart, cartTotal } = useStore();
@@ -47,7 +48,7 @@ export default function CheckoutPage() {
           {loading ? (
             <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
           ) : (
-            <CreditCard className="size-4" aria-hidden="true" />
+            <FontAwesomeIcon icon={faCreditCard} className="size-4" aria-hidden="true" />
           )}
           Continue to payment
         </Button>

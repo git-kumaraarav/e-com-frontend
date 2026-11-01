@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
-import { Send } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 
 const Footer = ({ className }: { className?: string }) => {
   return (
@@ -51,7 +52,7 @@ const Footer = ({ className }: { className?: string }) => {
             type="submit"
             className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
           >
-            <Send className="mr-2 inline-block size-4" aria-hidden="true" />
+            <FontAwesomeIcon icon={faPaperPlane} className="mr-2 inline-block size-4" aria-hidden="true" />
             Subscribe
           </button>
         </form>

@@ -106,7 +106,9 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user, account }) {
       if (account?.provider === "google" && account.id_token) {
-        const tokens = backendTokens(await exchangeGoogleToken(account.id_token));
+        const tokens = backendTokens(
+          await exchangeGoogleToken(account.id_token),
+        );
         const backendUser = await readBackendUser(tokens.accessToken);
         token.accessToken = tokens.accessToken;
         token.refreshToken = tokens.refreshToken;

@@ -6,7 +6,11 @@ import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from "embla-carousel-react"
 
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import {
+  faChevronLeft,
+  faChevronRight,
+} from "@fortawesome/free-solid-svg-icons"
 
 type CarouselApi = UseEmblaCarouselType[1]
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>
@@ -196,7 +200,7 @@ function CarouselPrevious({
       type="button"
       {...props}
     >
-      <ChevronLeftIcon />
+      <FontAwesomeIcon icon={faChevronLeft} />
       <span className="sr-only">Previous slide</span>
     </button>
   )
@@ -223,7 +227,7 @@ function CarouselNext({
       {...props}
       type="button"
     >
-      <ChevronRightIcon />
+      <FontAwesomeIcon icon={faChevronRight} />
       <span className="sr-only">Next slide</span>
     </button>
   )

@@ -9,7 +9,8 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { UserPlus } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
 
 const initialState: AuthFormState = { errors: {} };
@@ -39,7 +40,7 @@ export default function AuthForm() {
           <Input required name="password_confirmation" type="password" minLength={8} placeholder="Confirm password" />
           {state.errors.major && <Alert variant="destructive">{state.errors.major}</Alert>}
           <Button type="submit" disabled={pending} className="w-full">
-            <UserPlus className="size-4" aria-hidden="true" />
+            <FontAwesomeIcon icon={faUserPlus} className="size-4" aria-hidden="true" />
             {pending ? "Creating account..." : "Register"}
           </Button>
           <p className="text-center text-sm text-muted-foreground">

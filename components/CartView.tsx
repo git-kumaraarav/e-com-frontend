@@ -6,7 +6,8 @@ import { useStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { ArrowRight, Trash2 } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 export default function CartView() {
   const {
@@ -72,7 +73,7 @@ export default function CartView() {
                   className="text-destructive"
                   onClick={() => removeFromCart(item.id)}
                 >
-                  <Trash2 className="size-4" aria-hidden="true" />
+                  <FontAwesomeIcon icon={faTrash} className="size-4" aria-hidden="true" />
                   Remove
                 </Button>
               </div>
@@ -91,7 +92,7 @@ export default function CartView() {
             href="/checkout"
             className="mt-4 inline-flex h-10 w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90"
           >
-            <ArrowRight className="size-4" aria-hidden="true" />
+            <FontAwesomeIcon icon={faArrowRight} className="size-4" aria-hidden="true" />
             Checkout
           </Link>
         </CardContent>

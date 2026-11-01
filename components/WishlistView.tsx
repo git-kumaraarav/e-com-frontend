@@ -7,7 +7,8 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Alert } from "@/components/ui/alert";
-import { Trash2 } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 export default function WishlistView() {
   const { wishlist, toggleWishlist, collectionError } = useStore();
@@ -55,7 +56,7 @@ export default function WishlistView() {
               className="mt-2 w-full"
               onClick={() => toggleWishlist(product)}
             >
-              <Trash2 className="size-4" aria-hidden="true" />
+              <FontAwesomeIcon icon={faTrash} className="size-4" aria-hidden="true" />
               Remove from wishlist
             </Button>
           </div>

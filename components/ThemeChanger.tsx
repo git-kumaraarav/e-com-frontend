@@ -1,6 +1,7 @@
 "use client";
 
-import { Palette } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPalette } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -62,7 +63,7 @@ export default function ThemeChanger() {
       aria-label={`Theme: ${activeTheme?.label ?? "Default"}. Click to change`}
       className = "hover:cursor-pointer"
     >
-      <Palette className="size-4 " aria-hidden="true" />
+      <FontAwesomeIcon icon={faPalette} className="size-4" aria-hidden="true" />
     </Button>
   );
 }

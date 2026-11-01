@@ -2,7 +2,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { LogIn } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 
 export default function AuthPrompt() {
   return (
@@ -14,7 +15,7 @@ export default function AuthPrompt() {
             <Input className="w-full" type="email" placeholder="Email" aria-label="Email" />
             <Input className="w-full" type="password" placeholder="Password" aria-label="Password" />
             <Button className="w-full">
-              <LogIn className="size-4" aria-hidden="true" />
+              <FontAwesomeIcon icon={faRightToBracket} className="size-4" aria-hidden="true" />
               Login
             </Button>
           </div>

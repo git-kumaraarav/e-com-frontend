@@ -6,13 +6,13 @@ import { FormEvent, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
-import { getAuthenticatedState } from "@/components/actions/authenticatedState";
 import { useStore } from "@/lib/store";
-import { LogIn } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { setUser, setWishlist, setCart } = useStore();
+  const { syncAuthenticatedState } = useStore();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -33,17 +33,8 @@ export default function LoginScreen() {
         return;
       }
 
-      const state = await getAuthenticatedState();
-      if (state.error || !state.user) {
-        setError(state.error ?? "Unable to load your account.");
-        return;
-      }
-
-      setUser(state.user);
-      setWishlist(state.wishlist);
-      setCart(state.cart);
+      await syncAuthenticatedState();
       router.push("/");
-      router.refresh();
     } catch (error) {
       console.error("Login failed:", error);
       setError("Unable to sign in. Please try again.");
@@ -91,7 +82,7 @@ export default function LoginScreen() {
               <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
             ) : (
               <>
-                <LogIn className="size-4" aria-hidden="true" />
+                <FontAwesomeIcon icon={faRightToBracket} className="size-4" aria-hidden="true" />
                 Login
               </>
             )}

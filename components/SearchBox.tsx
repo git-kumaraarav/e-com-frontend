@@ -3,7 +3,8 @@
 import { useRouter } from "next/navigation";
 import { SubmitEvent  , useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group"
 import { Field, FieldLabel } from "@/components/ui/field"
@@ -24,7 +25,7 @@ export default function SearchBox() {
             <ButtonGroup className="w-full gap-1">
               <Input id="input-button-group" placeholder="Type to search..." onChange={(e) => setQuery(e.target.value)}/>
               <Button variant="outline" type="submit" className="hover:cursor-pointer">
-                <Search className="size-4" aria-hidden="true" />
+                <FontAwesomeIcon icon={faSearch} className="size-4" aria-hidden="true" />
               </Button>
             </ButtonGroup>
         </form>

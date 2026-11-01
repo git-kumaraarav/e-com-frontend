@@ -59,6 +59,15 @@ async function ProductDetailsContent({ params }: ProductDetailsPageProps) {
           {productDetails.description}
         </p>
         <ProductActions product={productDetails} />
+        { productDetails.attributes && (
+            productDetails.attributes.map((attribute) => (
+              <div key={attribute.id} className="flex flex-col gap-1">
+                <span className="font-semibold">{attribute.name}</span>
+                <span className="text-muted-foreground">{attribute.value}</span>
+              </div>
+            ))
+          )
+        }
       </div>
     </article>
   );
