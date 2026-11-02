@@ -72,3 +72,5 @@ export type BackendResponseFormat<T = unknown> = {
 export type ProductResponse = Product | BackendResponseFormat<Product>;
 export type ProductListResponse = Product[] | BackendResponseFormat<Product[]>;
 export type productType = Product;
+
+

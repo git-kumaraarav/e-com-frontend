@@ -100,9 +100,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [hydrated, setHydrated] = useState(false);
   const [collectionError, setCollectionError] = useState<string | null>(null);
+
+  
   const lastSyncedUserRef = useRef<string | null | undefined>(undefined);
   const authSyncPromiseRef = useRef<Promise<void> | null>(null);
 
+  // Store 
   useEffect(() => {
     // Storage is only available after mount, so hydrate the deterministic server state here.
     /* eslint-disable react-hooks/set-state-in-effect */

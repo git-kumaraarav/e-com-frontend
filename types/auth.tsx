@@ -1,4 +1,6 @@
+import { User } from "next-auth";
 import { CartItem, WishlistItem } from "./backend";
+import type { BackendUser } from "@/types/backend";
 
 export type AuthFormErrors = {
   major? : string;
@@ -17,3 +19,16 @@ export type AuthFormState = {
   wishlist?: WishlistItem[];
   cart?: CartItem[];
 }
+
+export type TokenResponse = {
+  status?: string;
+  status_code?: number;
+  timestamp?: string;
+  data?: {
+    access: string;
+    refresh: string;
+    expires_at: string;
+    user: BackendUser;
+  };
+};
+

@@ -1,7 +1,7 @@
 "use server";
 
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { loadCollections } from "@/components/actions/collections";
 
 export async function getAuthenticatedState() {
@@ -16,6 +16,7 @@ export async function getAuthenticatedState() {
       name: session.user.name ?? session.user.email,
       email: session.user.email,
     },
+
     wishlist: collections.wishlist,
     cart: collections.cart,
   };

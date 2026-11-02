@@ -1,8 +1,8 @@
 import "server-only";
 
 import { getServerSession } from "next-auth";
-import { UnauthorizedError } from "@/lib/errors";
-import { authOptions } from "@/lib/auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { redirect } from "next/navigation";
 
 const backendUrl =
   process.env.BACKEND_ROOT_URL ?? process.env.NEXT_PUBLIC_API_URL;
@@ -17,20 +17,14 @@ export default async function apiFetch<T>(
   path: string,
   options: RequestInit = {},
 ): Promise<T> {
-  const publicRequest =
-    (options.method ?? "GET") === "GET" &&
-    (path === "/api/products/" ||
-      path === "/api/banners/" ||
-      path === "/api/event-banners/" ||
-      path.startsWith("/api/products/") ||
-      path.startsWith("/api/banners/") ||
-      path.startsWith("/api/event-banners/"));
-  const session = publicRequest
-    ? null
-    : await getServerSession(authOptions);
+
+  const session = await getServerSession(authOptions);
   const accessToken = session?.accessToken;
+
   const headers = new Headers(options.headers);
+
   headers.set("Accept", "application/json");
+
   if (
     options.body &&
     !(options.body instanceof FormData) &&
@@ -38,6 +32,7 @@ export default async function apiFetch<T>(
   ) {
     headers.set("Content-Type", "application/json");
   }
+
   if (accessToken) headers.set("Authorization", `Bearer ${accessToken}`);
 
   const response = await fetch(resolveUrl(path), {
@@ -47,7 +42,7 @@ export default async function apiFetch<T>(
   });
 
   if (response.status === 401) {
-    throw new UnauthorizedError("Please log in to continue.");
+    redirect('/login')
   }
 
   if (!response.ok) {

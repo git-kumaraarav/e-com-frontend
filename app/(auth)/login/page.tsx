@@ -28,6 +28,7 @@ export default function LoginScreen() {
         password: String(formData.get("password") ?? ""),
         redirect: false,
       });
+
       if (result?.error) {
         setError("Invalid email or password.");
         return;

@@ -7,6 +7,7 @@ import type { Order } from "@/types/backend";
 export const instant = false;
 
 export default async function OrdersPage() {
+  
   let orders: Order[] = [];
   try {
     orders = await listOrders();
