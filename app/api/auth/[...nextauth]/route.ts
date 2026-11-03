@@ -24,19 +24,21 @@ async function exchangeGoogleToken(idToken: string) {
 }
 
 function backendTokens(data: TokenResponse) {
-  const accessToken = data.access ?? data.data?.access;
-  const refreshToken = data.refresh ?? data.data?.refresh;
+  const accessToken = data.data?.accessToken;
+  const refreshToken = data.data?.refreshToken;
+  const expiresAt = data.data?.expires_at;
+
   if (!accessToken || !refreshToken) {
     throw new Error("The authentication response did not contain both tokens.");
   }
-  return { accessToken, refreshToken };
+  return { accessToken, refreshToken, expiresAt };
 }
 
 async function refreshBackendToken(refreshToken: string) {
   const response = await fetch(endpoint("/api/auth/token/refresh/"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ refresh: refreshToken }),
+    body: JSON.stringify({ refreshToken: refreshToken }),
     cache: "no-store",
   });
   if (!response.ok) throw new Error("The authentication session has expired.");
@@ -65,17 +67,19 @@ export const authOptions: NextAuthOptions = {
           cache: "no-store",
         });
         if (!response.ok) return null;
-        const backendResponseJson= (await response.json()) as TokenResponse;
+        const backendResponseJson = (await response.json()) as TokenResponse;
 
         if (!backendResponseJson.data) return null;
 
         return {
           id: String(backendResponseJson.data?.user.email),
-          name: backendResponseJson.data?.user.name, 
+          name: backendResponseJson.data?.user.name,
           email: backendResponseJson.data?.user.email,
-          accessToken: backendResponseJson.data?.access,
-          refreshToken: backendResponseJson.data?.refresh,
-          expiresAt: new Date(backendResponseJson.data?.expires_at).toISOString()
+          accessToken: backendResponseJson.data?.accessToken,
+          refreshToken: backendResponseJson.data?.refreshToken,
+          expiresAt: new Date(
+            backendResponseJson.data?.expires_at,
+          ).toISOString(),
         } satisfies User;
       },
     }),
@@ -87,20 +91,25 @@ export const authOptions: NextAuthOptions = {
   pages: { signIn: "/login" },
   callbacks: {
     async jwt({ token, user, account }) {
-      
       if (account?.provider === "google" && account.id_token) {
-        const backendResponseJson = await exchangeGoogleToken(account.id_token)
-        if (!backendResponseJson.data) throw new Error("Failed to exchange Google token for backend tokens.");
+        const backendResponseJson = await exchangeGoogleToken(account.id_token);
+        if (!backendResponseJson.data)
+          throw new Error(
+            "Failed to exchange Google token for backend tokens.",
+          );
 
-        token.accessToken = backendResponseJson.data.access;
-        token.refreshToken = backendResponseJson.data.refresh;
-        token.expiresAt = new Date(backendResponseJson.data?.expires_at).toISOString();
-        token.user = backendResponseJson.data.user ? {
-          email: backendResponseJson.data.user.email,
-          name: backendResponseJson.data.user.name,
-        } : undefined;
+        token.accessToken = backendResponseJson.data.accessToken;
+        token.refreshToken = backendResponseJson.data.refreshToken;
+        token.expiresAt = new Date(
+          backendResponseJson.data?.expires_at,
+        ).toISOString();
+        token.user = backendResponseJson.data.user
+          ? {
+              email: backendResponseJson.data.user.email,
+              name: backendResponseJson.data.user.name,
+            }
+          : undefined;
       } else if (user && "accessToken" in user && "refreshToken" in user) {
-
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
         token.expiresAt = user.expiresAt;
@@ -118,8 +127,14 @@ export const authOptions: NextAuthOptions = {
         Date.now() >= new Date(token.expiresAt as string).getTime()
       ) {
         const tokens = await refreshBackendToken(token.refreshToken);
+
+        if (!tokens.accessToken || !tokens.refreshToken) {
+          throw new Error("Failed to refresh backend tokens.");
+        }
+
         token.accessToken = tokens.accessToken;
         token.refreshToken = tokens.refreshToken;
+        token.expiresAt = tokens.expiresAt;
       }
 
       return token;
@@ -128,7 +143,10 @@ export const authOptions: NextAuthOptions = {
       if (token.user) {
         session.user = token.user;
         session.accessToken = token.accessToken;
-        if (typeof token.expiresAt === "number" || typeof token.expiresAt === "string") {
+        if (
+          typeof token.expiresAt === "number" ||
+          typeof token.expiresAt === "string"
+        ) {
           session.expires = new Date(token.expiresAt).toISOString();
         }
       }
@@ -136,7 +154,6 @@ export const authOptions: NextAuthOptions = {
     },
   },
 };
-
 
 const handler = NextAuth(authOptions);
 
@@ -163,4 +180,3 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   return handler(request, withAuthParams(request));
 }
-

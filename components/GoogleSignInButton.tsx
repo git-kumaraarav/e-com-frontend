@@ -6,7 +6,11 @@ import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 
-export default function GoogleSignInButton() {
+interface GoogleSignInButtonProps {
+  callbackUrl?: string;
+}
+
+export default function GoogleSignInButton({ callbackUrl = "/" }: GoogleSignInButtonProps) {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -15,7 +19,7 @@ export default function GoogleSignInButton() {
     setPending(true);
 
     try {
-      await signIn("google", { callbackUrl: "/" });
+      await signIn("google", { callbackUrl });
     } catch (error) {
       console.error("Google sign-in failed:", error);
       setError("Unable to sign in with Google.");

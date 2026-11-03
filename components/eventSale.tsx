@@ -1,32 +1,13 @@
-import { cn } from "@/lib/utils";
-import React from "react";
 import Image from "next/image";
 import type { Banner } from "@/types/backend";
 import { EventSaleImageUrl } from "@/lib/api";
 import Link from "next/link";
 
-const EventSale = async ({
-  className,
-  children,
-}: {
-  className?: string;
-  children?: React.ReactNode;
-}) => {
-  // define a default values as fallback
-  let banner: Banner[] = [
-    {
-      id: 0,
-      imageUrl: "/images/hero1.jpg",
-      altText: "Default image",
-      title: "fallbacke banner",
-      description: "fallback image for banner",
-      url: "https://google.com",
-    },
-  ];
+const EventSale = async () => {
+  let banner: Banner[] = [];
 
   try {
     banner = await EventSaleImageUrl();
-    console.log("Event Sale Banner:", banner);
   } catch (error) {
     console.error("Error fetching event sale image URL:", error);
   }
@@ -41,7 +22,7 @@ const EventSale = async ({
               src={banner[0].imageUrl}
               alt="Exclusive Deal 1"
               className="aspect-video w-full object-cover"
-              height={200}
+              height={100}
               width={600}
             />
           </Link>

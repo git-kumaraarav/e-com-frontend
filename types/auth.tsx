@@ -1,5 +1,4 @@
-import { User } from "next-auth";
-import { CartItem, WishlistItem } from "./backend";
+import type { CartItem, WishlistItem } from "./backend";
 import type { BackendUser } from "@/types/backend";
 
 export type AuthFormErrors = {
@@ -25,10 +24,9 @@ export type TokenResponse = {
   status_code?: number;
   timestamp?: string;
   data?: {
-    access: string;
-    refresh: string;
+    accessToken: string;
+    refreshToken: string;
     expires_at: string;
     user: BackendUser;
   };
 };
-

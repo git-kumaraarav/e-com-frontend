@@ -20,8 +20,8 @@ export const getProduct = async (slug: string) =>
 
 export const listBanners = async (): Promise<Banner[]> =>
   unwrap(
-    await apiFetch<Banner[] | { data: Banner[] }>("/api/banners/"),
-  ) as Banner[];
+    await apiFetch< Banner[] | { data: Banner[] }>("/api/banners/"),
+  );
 
 export const getBanner = async (id: string | number) =>
   unwrap(await apiFetch<Banner | { data: Banner }>(`/api/banners/${id}/`));

@@ -13,7 +13,7 @@ export type Product = {
     rate: number;
     count: number;
   };
-  attributes?: any; 
+  attributes?: { id: number; name: string; value: string }[];
 };
 
 export type BackendUser = {
@@ -72,5 +72,4 @@ export type BackendResponseFormat<T = unknown> = {
 export type ProductResponse = Product | BackendResponseFormat<Product>;
 export type ProductListResponse = Product[] | BackendResponseFormat<Product[]>;
 export type productType = Product;
-
 

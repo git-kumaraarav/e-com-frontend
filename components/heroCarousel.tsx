@@ -1,7 +1,5 @@
-"use client"; 
+"use client";
 
-import {cn} from '@/lib/utils';
-import React from 'react';
 import {
   Carousel,
   CarouselContent,
@@ -14,20 +12,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { Banner } from '@/types/backend';
 
-const HeroCaroursel = ({banners, className, children}:{banners: Banner[], className?: string, children?: React.ReactNode}) => {
-
-  if (!banners || banners.length === 0) {
-    banners = [
-      { id: 0, imageUrl: "/images/hero1.jpg", altText: "Default image", title: "", description: "", url: "" }, 
-      { id: 1, imageUrl: "/images/hero1.jpg", altText: "Default image", title: "", description: "", url: "" }, 
-      { id: 2,  imageUrl: "/images/hero1.jpg", altText: "Default image", title: "", description: "", url: "" }, 
-      { id: 3, imageUrl: "/images/hero1.jpg", altText: "Default image", title: "", description: "", url: "" }, 
-      { id: 4, imageUrl: "/images/hero1.jpg", altText: "Default image", title: "", description: "", url: "" }, 
-      { id: 5, imageUrl: "/images/hero1.jpg", altText: "Default image", title: "", description: "", url: "" }, 
-      { id: 6, imageUrl: "/images/hero1.jpg", altText: "Default image", title: "", description: "", url: "" }
-    ]
-  
-  }
+const HeroCaroursel = ({ banners }: { banners: Banner[] }) => {
+  if (banners.length === 0) return null;
 
 return (
       <div className="relative w-full overflow-hidden rounded-xl border border-border bg-muted shadow-sm">

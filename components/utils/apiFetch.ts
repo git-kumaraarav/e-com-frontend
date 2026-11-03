@@ -2,7 +2,9 @@ import "server-only";
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { redirect } from "next/navigation";
+import { UnauthorizedError } from "@/lib/errors";
+
+export const instant = false; 
 
 const backendUrl =
   process.env.BACKEND_ROOT_URL ?? process.env.NEXT_PUBLIC_API_URL;
@@ -42,7 +44,7 @@ export default async function apiFetch<T>(
   });
 
   if (response.status === 401) {
-    redirect('/login')
+    throw new UnauthorizedError("Please log in to continue.");
   }
 
   if (!response.ok) {

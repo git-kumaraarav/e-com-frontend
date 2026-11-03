@@ -12,7 +12,18 @@ import {
   loadCollections,
   updateRemoteCartItem,
 } from "@/components/actions/collections";
+import { getSession } from "next-auth/react";
 import { getAuthenticatedState } from "@/components/actions/authenticatedState";
+import {
+  clearPersistedUserData,
+  mapCartItem,
+  mapWishlistItem,
+  readStorage,
+  STORAGE_KEYS,
+  type CartState,
+  type User,
+  type WishlistState,
+} from "@/lib/store-utils";
 import React, {
   createContext,
   useContext,
@@ -22,11 +33,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-
-type User = { name?: string; email: string };
-type ProductWithBackendId = Product & { backendId?: number };
-type CartState = ProductWithBackendId & { quantity: number };
-type WishlistState = ProductWithBackendId;
 
 type StoreContextValue = {
   cart: CartState[];
@@ -49,51 +55,6 @@ type StoreContextValue = {
 
 const StoreContext = createContext<StoreContextValue | null>(null);
 
-const STORAGE_KEYS = {
-  cart: "user-cart",
-  wishlist: "user-wishlist",
-  user: "user",
-} as const;
-
-const FALLBACK_PRODUCT: Product = {
-  id: 0,
-  title: "Product",
-  price: 0,
-  description: "",
-  category: "products",
-  image: "/images/hero1.jpg",
-};
-
-function readStorage<T>(key: string, fallback: T): T {
-  try {
-    const value = localStorage.getItem(key);
-    return value ? (JSON.parse(value) as T) : fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-function productFromBackend(product: number | Product): Product {
-  return typeof product === "number"
-    ? { ...FALLBACK_PRODUCT, id: product }
-    : product;
-}
-
-function mapCartItem(item: BackendCartItem): CartState {
-  return {
-    ...productFromBackend(item.product),
-    quantity: item.quantity,
-    backendId: item.id,
-  };
-}
-
-function mapWishlistItem(item: BackendWishlistItem): WishlistState {
-  return {
-    ...productFromBackend(item.product),
-    backendId: item.id,
-  };
-}
-
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCartItems] = useState<CartState[]>([]);
   const [wishlist, setWishlistItems] = useState<WishlistState[]>([]);
@@ -101,20 +62,56 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [hydrated, setHydrated] = useState(false);
   const [collectionError, setCollectionError] = useState<string | null>(null);
 
-  
   const lastSyncedUserRef = useRef<string | null | undefined>(undefined);
   const authSyncPromiseRef = useRef<Promise<void> | null>(null);
 
-  // Store 
-  useEffect(() => {
-    // Storage is only available after mount, so hydrate the deterministic server state here.
-    /* eslint-disable react-hooks/set-state-in-effect */
-    setCartItems(readStorage(STORAGE_KEYS.cart, []));
-    setWishlistItems(readStorage(STORAGE_KEYS.wishlist, []));
-    setUser(readStorage(STORAGE_KEYS.user, null));
-    setHydrated(true);
-    /* eslint-enable react-hooks/set-state-in-effect */
+  const clearUserData = useCallback(() => {
+    clearPersistedUserData();
+    setCartItems([]);
+    setWishlistItems([]);
+    setUser(null);
+    setCollectionError(null);
   }, []);
+
+  const setCollections = useCallback(
+    (remoteCart: BackendCartItem[], remoteWishlist: BackendWishlistItem[]) => {
+      setCartItems(remoteCart.map(mapCartItem));
+      setWishlistItems(remoteWishlist.map(mapWishlistItem));
+    },
+    [],
+  );
+
+  // 1. Set/Unset user data
+  useEffect(() => {
+    let cancelled = false;
+
+    getSession()
+      .then((session) => {
+        if (cancelled) return;
+
+        if (!session?.user?.email) {
+          clearUserData();
+        } else {
+          setCartItems(readStorage(STORAGE_KEYS.cart, []));
+          setWishlistItems(readStorage(STORAGE_KEYS.wishlist, []));
+          setUser({
+            name: session.user.name ?? session.user.email,
+            email: session.user.email,
+          });
+        }
+        setHydrated(true);
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        console.error("Unable to verify the authentication session:", error);
+        clearUserData();
+        setHydrated(true);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [clearUserData]);
 
   const setCart = useCallback((items: BackendCartItem[] = []) => {
     setCartItems(items.map(mapCartItem));
@@ -129,11 +126,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
     const sync = getAuthenticatedState()
       .then((state) => {
-        if (state.error || !state.user) return;
+        if (state.error || !state.user) {
+          clearUserData();
+          return;
+        }
         lastSyncedUserRef.current = state.user.email;
         setUser(state.user);
-        setCartItems(state.cart.map(mapCartItem));
-        setWishlistItems(state.wishlist.map(mapWishlistItem));
+        setCollections(state.cart, state.wishlist);
       })
       .finally(() => {
         authSyncPromiseRef.current = null;
@@ -141,38 +140,27 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
     authSyncPromiseRef.current = sync;
     return sync;
-  }, []);
+  }, [clearUserData, setCollections]);
 
   useEffect(() => {
     if (!hydrated) return;
 
     const userKey = user?.email ?? null;
     if (lastSyncedUserRef.current === userKey) return;
-
-    if (!user) {
-      lastSyncedUserRef.current = userKey;
-      syncAuthenticatedState().catch((error) => {
-        lastSyncedUserRef.current = undefined;
-        console.error("Unable to hydrate the authenticated store:", error);
-      });
-      return;
-    }
+    if (!user) return;
 
     let cancelled = false;
     loadCollections()
       .then(({ cart: remoteCart, wishlist: remoteWishlist, authenticated }) => {
         if (cancelled) return;
         if (!authenticated) {
-          setCartItems([]);
-          setWishlistItems([]);
-          setUser(null);
+          clearUserData();
           lastSyncedUserRef.current = null;
           setCollectionError("Your session expired. Please log in again.");
           return;
         }
         lastSyncedUserRef.current = userKey;
-        setCartItems(remoteCart.map(mapCartItem));
-        setWishlistItems(remoteWishlist.map(mapWishlistItem));
+        setCollections(remoteCart, remoteWishlist);
         setCollectionError(null);
       })
       .catch((error) => {
@@ -185,7 +173,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [hydrated, syncAuthenticatedState, user]);
+  }, [clearUserData, hydrated, setCollections, user]);
 
   useEffect(() => {
     if (hydrated) localStorage.setItem(STORAGE_KEYS.cart, JSON.stringify(cart));
@@ -336,18 +324,14 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       setCart,
       setWishlist,
       syncAuthenticatedState,
-      clearUserData: () => {
-        setCartItems([]);
-        setWishlistItems([]);
-        setUser(null);
-        setCollectionError(null);
-      },
+      clearUserData,
       collectionError,
     }),
     [
       cart,
       collectionError,
       reportCollectionError,
+      clearUserData,
       setCart,
       setWishlist,
       syncAuthenticatedState,

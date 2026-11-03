@@ -1,9 +1,8 @@
 import CartView from '@/components/CartView';
 import WishlistView from '@/components/WishlistView';
 import {cn} from '@/lib/utils';
-import React from 'react';
 
-const CartPage= ({className, children}:{className?: string, children?: React.ReactNode}) => {
+const CartPage = ({ className }: { className?: string }) => {
     
     return (
         <div className={cn("flex flex-col gap-10 ", className)}>

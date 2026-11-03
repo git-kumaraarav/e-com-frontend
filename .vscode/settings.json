@@ -8,5 +8,11 @@
     "**/Thumbs.db": true,
     "node_modules": true
   },
-  "hide-files.files": []
+  "hide-files.files": [],
+  "chat.tools.terminal.autoApprove": {
+    "/^git status --short && printf '\\\\nTop-level:\\\\n' && find \\. -maxdepth 2 -type f \\| sort \\| head -80$/": {
+      "approve": true,
+      "matchCommandLine": true
+    }
+  }
 }

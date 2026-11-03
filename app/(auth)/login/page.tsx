@@ -1,8 +1,8 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { FormEvent, Suspense, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
@@ -10,8 +10,15 @@ import { useStore } from "@/lib/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 
-export default function LoginScreen() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const rawCallbackUrl = searchParams.get("callbackUrl");
+  const callbackUrl =
+    rawCallbackUrl && rawCallbackUrl.startsWith("/") && !rawCallbackUrl.startsWith("//")
+      ? rawCallbackUrl
+      : "/";
+
   const { syncAuthenticatedState } = useStore();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -35,7 +42,7 @@ export default function LoginScreen() {
       }
 
       await syncAuthenticatedState();
-      router.push("/");
+      router.push(callbackUrl);
     } catch (error) {
       console.error("Login failed:", error);
       setError("Unable to sign in. Please try again.");
@@ -52,7 +59,7 @@ export default function LoginScreen() {
       >
         {error && <p className="text-center text-red-500">{error}</p>}
         <div className="flex flex-col justify-center gap-2">
-          <GoogleSignInButton />
+          <GoogleSignInButton callbackUrl={callbackUrl} />
           <div className="flex items-center gap-3 py-1 text-sm text-muted-foreground">
             <span className="h-px flex-1 bg-border" />
             <span>or</span>
@@ -91,5 +98,19 @@ export default function LoginScreen() {
         </div>
       </form>
     </div>
+  );
+}
+
+export default function LoginScreen() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-96 items-center justify-center">
+          <span className="size-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   );
 }
